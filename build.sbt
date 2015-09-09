@@ -2,7 +2,7 @@ name := "deeplearning4j-examples-scala"
 
 version := "1.0"
 
-scalaVersion := "2.11.7"
+scalaVersion := "2.10.4"
 
 lazy val root = project.in(file("."))
 
