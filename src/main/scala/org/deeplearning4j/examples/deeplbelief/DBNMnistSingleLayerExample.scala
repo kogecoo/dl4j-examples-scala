@@ -77,7 +77,7 @@ object DBNMnistSingleLayerExample {
         }
 
         log.info("Evaluate model....")
-        val eval: Evaluation = new Evaluation()
+        val eval: Evaluation = new Evaluation(outputNum)
         while(iter.hasNext()) {
             val testData: DataSet = iter.next()
             testData.normalizeZeroMeanZeroUnitVariance()

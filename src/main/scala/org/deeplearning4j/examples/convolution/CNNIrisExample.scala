@@ -95,7 +95,7 @@ object CNNIrisExample {
         }
 
         log.info("Evaluate model....")
-        val eval: Evaluation = new Evaluation()
+        val eval: Evaluation = new Evaluation(outputNum)
         val output: INDArray = model.output(trainTest.getTest().getFeatureMatrix())
         eval.eval(trainTest.getTest().getLabels(), output)
         log.info(eval.stats())

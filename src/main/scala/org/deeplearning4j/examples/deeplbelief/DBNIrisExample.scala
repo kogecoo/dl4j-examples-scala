@@ -99,7 +99,7 @@ object DBNIrisExample {
         }
 
         log.info("Evaluate model....")
-        val eval = new Evaluation()
+        val eval = new Evaluation(outputNum)
         val output = model.output(test.getFeatureMatrix())
 
         (0 until output.rows()).foreach { i =>

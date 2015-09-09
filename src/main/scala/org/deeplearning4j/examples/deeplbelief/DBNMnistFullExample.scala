@@ -79,7 +79,7 @@ object DBNMnistFullExample {
         model.fit(iter); // achieves end to end pre-training
 
         log.info("Evaluate model....")
-        val eval = new Evaluation()
+        val eval = new Evaluation(outputNum)
 
         val testIter = new MnistDataSetIterator(100,10000)
         while(testIter.hasNext()) {

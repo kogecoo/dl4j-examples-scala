@@ -92,7 +92,7 @@ object CNNMnistExample {
         log.info("Evaluate weights....")
 
         log.info("Evaluate model....")
-        val eval: Evaluation = new Evaluation()
+        val eval: Evaluation = new Evaluation(outputNum)
         testInput.zip(testLabels).foreach { case (input, label) =>
           val output: INDArray = model.output(input)
           eval.eval(label, output)

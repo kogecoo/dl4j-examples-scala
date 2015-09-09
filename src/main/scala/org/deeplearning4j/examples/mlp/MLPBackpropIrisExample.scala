@@ -86,7 +86,7 @@ object MLPBackpropIrisExample {
 
 
         log.info("Evaluate model....")
-        val eval: Evaluation = new Evaluation()
+        val eval: Evaluation = new Evaluation(outputNum)
         val iterTest: DataSetIterator = new IrisDataSetIterator(numSamples, numSamples);
         val test: DataSet = iterTest.next()
         test.normalizeZeroMeanZeroUnitVariance()
