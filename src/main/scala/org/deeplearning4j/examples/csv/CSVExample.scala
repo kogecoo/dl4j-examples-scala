@@ -35,7 +35,7 @@ object CSVExample {
         val recordReader: RecordReader = new CSVRecordReader(0,",")
         recordReader.initialize(new FileSplit(new ClassPathResource("iris.txt").getFile()))
         //reader,label index,number of possible labels
-        val iterator: DataSetIterator = new RecordReaderDataSetIterator(recordReader,3,3)
+        val iterator: DataSetIterator = new RecordReaderDataSetIterator(recordReader,4,3)
         //get the dataset using the record reader. The datasetiterator handles vectorization
         val next: DataSet = iterator.next()
         // Customizing params
@@ -44,9 +44,9 @@ object CSVExample {
 
         val numInputs = 4
         val outputNum = 3
-        val iterations = 100
+        val iterations = 3
         val seed = 6L
-        val listenerFreq = iterations/5
+        val listenerFreq = iterations
 
 
         log.info("Build model....")
@@ -54,19 +54,20 @@ object CSVExample {
                 .seed(seed)
                 .iterations(iterations)
 
+                .constrainGradientToUnitNorm(true).useDropConnect(true)
                 .learningRate(1e-3)
                 .l1(0.3).regularization(true).l2(1e-3)
                 .constrainGradientToUnitNorm(true)
                 .list(3)
                 .layer(0, new DenseLayer.Builder().nIn(numInputs).nOut(3)
-                        .activation("tanh")
+                        .activation("relu").dropOut(0.5)
                         .weightInit(WeightInit.XAVIER)
                         .build())
                 .layer(1, new DenseLayer.Builder().nIn(3).nOut(2)
                         .activation("tanh")
                         .weightInit(WeightInit.XAVIER)
                         .build())
-                .layer(2, new OutputLayer.Builder(LossFunctions.LossFunction.MCXENT)
+                .layer(2, new OutputLayer.Builder(LossFunctions.LossFunction.NEGATIVELOGLIKELIHOOD)
                         .weightInit(WeightInit.XAVIER)
                         .activation("softmax")
                         .nIn(2).nOut(outputNum).build())
@@ -78,12 +79,13 @@ object CSVExample {
         model.init()
         model.setListeners(Seq[IterationListener](new ScoreIterationListener(listenerFreq)).asJava)
 
+        next.normalizeZeroMeanZeroUnitVariance()
         //split test and train
-        val testAndTrain: SplitTestAndTrain = next.splitTestAndTrain(0.8)
+        val testAndTrain: SplitTestAndTrain = next.splitTestAndTrain(0.5)
         model.fit(testAndTrain.getTrain())
 
         //evaluate the model
-        val eval = new Evaluation()
+        val eval = new Evaluation(3)
         val test: DataSet = testAndTrain.getTest()
         val output: INDArray = model.output(test.getFeatureMatrix())
         eval.eval(test.getLabels(), output)
