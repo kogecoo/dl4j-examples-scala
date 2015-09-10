@@ -49,7 +49,6 @@ object CNNIrisExample {
         val irisIter: DataSetIterator = new IrisDataSetIterator(batchSize, numSamples)
         val iris: DataSet = irisIter.next()
         iris.normalizeZeroMeanZeroUnitVariance()
-        iris.shuffle()
 
         val trainTest: SplitTestAndTrain = iris.splitTestAndTrain(splitTrainNum, new Random(seed))
 

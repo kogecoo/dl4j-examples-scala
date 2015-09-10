@@ -1,5 +1,6 @@
 package org.deeplearning4j.examples.deepbelief
 
+import org.apache.commons.io.FileUtils
 import org.deeplearning4j.datasets.iterator.DataSetIterator
 import org.deeplearning4j.datasets.iterator.impl.IrisDataSetIterator
 import org.deeplearning4j.eval.Evaluation
@@ -18,9 +19,9 @@ import org.nd4j.linalg.lossfunctions.LossFunctions
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
-import java.io.IOException
-import java.util.Arrays
-import java.util.Random
+import java.io._
+import java.nio.file.{ Files, Paths }
+import java.util.{ Arrays, Random }
 import scala.collection.JavaConverters._
 
 object DBNIrisExample {
@@ -37,7 +38,7 @@ object DBNIrisExample {
         val outputNum = 3
         val numSamples = 150
         val batchSize = 150
-        val iterations = 2
+        val iterations = 5
         val splitTrainNum = (batchSize * .8).toInt
         val seed = 123
         val listenerFreq = 1
@@ -45,7 +46,7 @@ object DBNIrisExample {
         log.info("Load data....")
         val iter: DataSetIterator = new IrisDataSetIterator(batchSize, numSamples)
         val next: DataSet = iter.next()
-        next.scale()
+        next.normalizeZeroMeanZeroUnitVariance()
 
         log.info("Split data....")
         val testAndTrain: SplitTestAndTrain = next.splitTestAndTrain(splitTrainNum, new Random(seed))
@@ -57,10 +58,9 @@ object DBNIrisExample {
         val conf: MultiLayerConfiguration = new NeuralNetConfiguration.Builder()
                 .seed(seed) // Seed to lock in weight initialization for tuning
                 .iterations(iterations) // # training iterations predict/classify & backprop
-                .learningRate(1e-3f) // Optimization step size
-                .optimizationAlgo(OptimizationAlgorithm.LINE_GRADIENT_DESCENT) // Backprop method (calculate the gradients)
-                .momentum(0.9)
-                .constrainGradientToUnitNorm(true)
+                .learningRate(1e-6f) // Optimization step size
+                .optimizationAlgo(OptimizationAlgorithm.CONJUGATE_GRADIENT) // Backprop method (calculate the gradients)
+                .l1(1e-1).regularization(true).l2(2e-4)
                 .useDropConnect(true)
                 .list(2) // # NN layers (does not count input layer)
                 .layer(0, new RBM.Builder(RBM.HiddenUnit.RECTIFIED, RBM.VisibleUnit.GAUSSIAN)
@@ -111,6 +111,25 @@ object DBNIrisExample {
         eval.eval(test.getLabels(), output)
         log.info(eval.stats())
         log.info("****************Example finished********************")
+
+        val fos: OutputStream = Files.newOutputStream(Paths.get("coefficients.bin"))
+        val dos = new DataOutputStream(fos)
+        Nd4j.write(model.params(), dos)
+        dos.flush()
+        dos.close()
+        FileUtils.write(new File("conf.json"), model.getLayerWiseConfigurations().toJson())
+
+        val confFromJson = MultiLayerConfiguration.fromJson(FileUtils.readFileToString(new File("conf.json")))
+        val dis = new DataInputStream(new FileInputStream("coefficients.bin"))
+        val newParams = Nd4j.read(dis)
+        dis.close()
+        val savedNetwork = new MultiLayerNetwork(confFromJson)
+        savedNetwork.init()
+        savedNetwork.setParameters(newParams)
+        System.out.println("Original network params " + model.params())
+        System.out.println(savedNetwork.params())
+
+
 
     }
 }
