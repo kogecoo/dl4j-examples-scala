@@ -6,6 +6,7 @@ import org.deeplearning4j.eval.Evaluation
 import org.deeplearning4j.nn.api.OptimizationAlgorithm
 import org.deeplearning4j.nn.conf.{ MultiLayerConfiguration, NeuralNetConfiguration }
 import org.deeplearning4j.nn.conf.layers.{ ConvolutionLayer, OutputLayer }
+import org.deeplearning4j.nn.conf.layers.setup.ConvolutionLayerSetup
 import org.deeplearning4j.nn.conf.preprocessor.{ CnnToFeedForwardPreProcessor, FeedForwardToCnnPreProcessor }
 import org.deeplearning4j.nn.multilayer.MultiLayerNetwork
 import org.deeplearning4j.nn.params.DefaultParamInitializer
@@ -52,7 +53,7 @@ object CNNIrisExample {
 
         val trainTest: SplitTestAndTrain = iris.splitTestAndTrain(splitTrainNum, new Random(seed))
 
-        val conf: MultiLayerConfiguration = new NeuralNetConfiguration.Builder()
+        val builder: MultiLayerConfiguration.Builder = new NeuralNetConfiguration.Builder()
                 .seed(seed)
                 .iterations(iterations)
                 .batchSize(batchSize)
@@ -74,10 +75,11 @@ object CNNIrisExample {
                         .weightInit(WeightInit.XAVIER)
                         .activation("softmax")
                         .build())
-                .inputPreProcessor(0, new FeedForwardToCnnPreProcessor(numRows, numColumns, nChannels))
-                .inputPreProcessor(1, new CnnToFeedForwardPreProcessor())
+
                 .backprop(true).pretrain(false)
-                .build()
+        new ConvolutionLayerSetup(builder, 2, 2, 1)
+
+        val conf: MultiLayerConfiguration = builder.build()
 
         log.info("Build model....")
         val model: MultiLayerNetwork = new MultiLayerNetwork(conf)

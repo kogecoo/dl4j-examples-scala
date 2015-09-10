@@ -8,7 +8,6 @@ lazy val root = project.in(file("."))
 
 libraryDependencies ++= Seq(
   "commons-io" % "commons-io" % "2.4",
-  "org.deeplearning4j" % "deeplearning4j-ui" % "0.4-rc2.2",
   "org.deeplearning4j" % "deeplearning4j-nlp" % "0.4-rc2.2",
   "org.deeplearning4j" % "deeplearning4j-core" % "0.4-rc2.2",
   "org.jblas" % "jblas" % "1.2.4",

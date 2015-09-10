@@ -1,10 +1,12 @@
 package org.deeplearning4j.examples.convolution
 
+import org.deeplearning4j.datasets.fetchers.LFWDataFetcher
 import org.deeplearning4j.datasets.iterator.DataSetIterator
 import org.deeplearning4j.datasets.iterator.impl.LFWDataSetIterator
 import org.deeplearning4j.nn.api.OptimizationAlgorithm
 import org.deeplearning4j.nn.conf.{ MultiLayerConfiguration, NeuralNetConfiguration }
 import org.deeplearning4j.nn.conf.layers.{ ConvolutionLayer, OutputLayer, SubsamplingLayer }
+import org.deeplearning4j.nn.conf.layers.setup.ConvolutionLayerSetup
 import org.deeplearning4j.nn.conf.preprocessor.{ CnnToFeedForwardPreProcessor, FeedForwardToCnnPreProcessor }
 import org.deeplearning4j.nn.multilayer.MultiLayerNetwork
 import org.deeplearning4j.nn.weights.WeightInit
@@ -30,7 +32,7 @@ object LFWDataSet {
         val numRows = 28
         val numColumns = 28
         val nChannels = 1
-        val outputNum = 10
+        val outputNum = 5749
         val numSamples = 2000
         val batchSize = 500
         val iterations = 10
@@ -40,7 +42,7 @@ object LFWDataSet {
 
 
         log.info("Build model....")
-        val conf: MultiLayerConfiguration = new NeuralNetConfiguration.Builder()
+        val builder: MultiLayerConfiguration.Builder = new NeuralNetConfiguration.Builder()
                 .seed(seed)
                 .batchSize(batchSize)
                 .iterations(iterations)
@@ -56,18 +58,13 @@ object LFWDataSet {
                 .layer(1, new SubsamplingLayer.Builder(SubsamplingLayer.PoolingType.MAX, Array[Int](2, 2))
                         .build())
                 .layer(2, new OutputLayer.Builder(LossFunctions.LossFunction.NEGATIVELOGLIKELIHOOD)
-                        .nIn(150)
                         .nOut(outputNum)
                         .weightInit(WeightInit.XAVIER)
                         .activation("softmax")
                         .build())
-                .inputPreProcessor(0, new FeedForwardToCnnPreProcessor(numRows, numColumns, 1))
-                .inputPreProcessor(2, new CnnToFeedForwardPreProcessor())
                 .backprop(true).pretrain(false)
-                .build()
 
-
-        val model = new MultiLayerNetwork(conf)
+        val model = new MultiLayerNetwork(builder.build())
         model.init()
 
         log.info("Train model....")
@@ -76,7 +73,7 @@ object LFWDataSet {
 
         while(lfw.hasNext()) {
             val next: DataSet = lfw.next()
-            next.normalizeZeroMeanZeroUnitVariance()
+            next.scale()
             model.fit(next)
         }
     }

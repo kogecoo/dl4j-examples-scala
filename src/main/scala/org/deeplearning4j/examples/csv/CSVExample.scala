@@ -80,8 +80,9 @@ object CSVExample {
         model.setListeners(Seq[IterationListener](new ScoreIterationListener(listenerFreq)).asJava)
 
         next.normalizeZeroMeanZeroUnitVariance()
+        next.shuffle()
         //split test and train
-        val testAndTrain: SplitTestAndTrain = next.splitTestAndTrain(0.5)
+        val testAndTrain: SplitTestAndTrain = next.splitTestAndTrain(0.6)
         model.fit(testAndTrain.getTrain())
 
         //evaluate the model

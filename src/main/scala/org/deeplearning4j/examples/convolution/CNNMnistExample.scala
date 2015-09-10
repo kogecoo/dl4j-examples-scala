@@ -4,8 +4,8 @@ import org.deeplearning4j.datasets.iterator.impl.MnistDataSetIterator
 import org.deeplearning4j.eval.Evaluation
 import org.deeplearning4j.nn.api.OptimizationAlgorithm
 import org.deeplearning4j.nn.conf.{ MultiLayerConfiguration, NeuralNetConfiguration }
-import org.deeplearning4j.nn.conf.layers.{ ConvolutionLayer, OutputLayer }
-import org.deeplearning4j.nn.conf.layers.SubsamplingLayer
+import org.deeplearning4j.nn.conf.layers.{ ConvolutionLayer, OutputLayer, SubsamplingLayer }
+import org.deeplearning4j.nn.conf.layers.setup.ConvolutionLayerSetup
 import org.deeplearning4j.nn.conf.preprocessor.{ CnnToFeedForwardPreProcessor, FeedForwardToCnnPreProcessor }
 import org.deeplearning4j.nn.multilayer.MultiLayerNetwork
 import org.deeplearning4j.nn.weights.WeightInit
@@ -46,7 +46,7 @@ object CNNMnistExample {
         val mnistIter: DataSetIterator = new MnistDataSetIterator(batchSize,numSamples, true)
 
         log.info("Build model....")
-        val conf: MultiLayerConfiguration = new NeuralNetConfiguration.Builder()
+      val builder: MultiLayerConfiguration.Builder = new NeuralNetConfiguration.Builder()
                 .seed(seed)
                 .batchSize(batchSize)
                 .iterations(iterations)
@@ -67,10 +67,10 @@ object CNNMnistExample {
                         .weightInit(WeightInit.XAVIER)
                         .activation("softmax")
                         .build())
-                .inputPreProcessor(0, new FeedForwardToCnnPreProcessor(numRows, numColumns, 1))
-                .inputPreProcessor(2, new CnnToFeedForwardPreProcessor())
                 .backprop(true).pretrain(false)
-                .build()
+        new ConvolutionLayerSetup(builder, 28, 28, 1)
+
+        val conf: MultiLayerConfiguration = builder.build()
 
         val model: MultiLayerNetwork = new MultiLayerNetwork(conf)
         model.init()

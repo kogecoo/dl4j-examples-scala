@@ -117,7 +117,7 @@ object DBNIrisExample {
         Nd4j.write(model.params(), dos)
         dos.flush()
         dos.close()
-        FileUtils.write(new File("conf.json"), model.getLayerWiseConfigurations().toJson())
+        FileUtils.writeStringToFile(new File("conf.json"), model.getLayerWiseConfigurations().toJson())
 
         val confFromJson = MultiLayerConfiguration.fromJson(FileUtils.readFileToString(new File("conf.json")))
         val dis = new DataInputStream(new FileInputStream("coefficients.bin"))
