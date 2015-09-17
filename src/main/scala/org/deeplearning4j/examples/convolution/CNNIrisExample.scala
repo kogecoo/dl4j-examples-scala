@@ -77,7 +77,7 @@ object CNNIrisExample {
                         .build())
 
                 .backprop(true).pretrain(false)
-        new ConvolutionLayerSetup(builder, 2, 2, 1)
+        new ConvolutionLayerSetup(builder, numRows, numColumns, nChannels);
 
         val conf: MultiLayerConfiguration = builder.build()
 

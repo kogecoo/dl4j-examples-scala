@@ -68,7 +68,7 @@ object CNNMnistExample {
                         .activation("softmax")
                         .build())
                 .backprop(true).pretrain(false)
-        new ConvolutionLayerSetup(builder, 28, 28, 1)
+        new ConvolutionLayerSetup(builder, numRows, numColumns, nChannels)
 
         val conf: MultiLayerConfiguration = builder.build()
 
