@@ -4,7 +4,7 @@ import org.deeplearning4j.datasets.iterator.DataSetIterator
 import org.deeplearning4j.datasets.iterator.impl.IrisDataSetIterator
 import org.deeplearning4j.nn.api.Layer
 import org.deeplearning4j.nn.api.OptimizationAlgorithm
-import org.deeplearning4j.nn.conf.NeuralNetConfiguration
+import org.deeplearning4j.nn.conf.{Updater, NeuralNetConfiguration}
 import org.deeplearning4j.nn.conf.distribution.UniformDistribution
 import org.deeplearning4j.nn.conf.layers.RBM
 import org.deeplearning4j.nn.conf.layers.RBM._
@@ -33,6 +33,7 @@ object RBMIrisExample {
         // Customizing params
         Nd4j.MAX_SLICES_TO_PRINT = -1
         Nd4j.MAX_ELEMENTS_PER_SLICE = -1
+        Nd4j.ENFORCE_NUMERICAL_STABILITY = true
 
         val numRows = 4
         val numColumns = 1
@@ -48,7 +49,7 @@ object RBMIrisExample {
         // Loads data into generator and format consumable for NN
         val iris: DataSet = iter.next()
 
-        iris.normalizeZeroMeanZeroUnitVariance()
+        iris.scale()
 
         log.info("Build model....")
         val conf: NeuralNetConfiguration = new NeuralNetConfiguration.Builder()
@@ -59,16 +60,14 @@ object RBMIrisExample {
                         .nOut(outputNum) // Output nodes
                         .activation("tanh") // Activation function type
                         .weightInit(WeightInit.XAVIER) // Weight initialization
-                        .lossFunction(LossFunctions.LossFunction.RMSE_XENT)
+                        .lossFunction(LossFunctions.LossFunction.XENT)
+                        .updater(Updater.NESTEROVS)
                         .build())
                 .seed(seed) // Locks in weight initialization for tuning
                 .learningRate(1e-1f) // Backprop step size
-                .momentum(0.9) // Speed of modifying learning rate
-                .regularization(true) // Prevents overfitting
-                .l2(2e-4) // Regularization type L2
-                .optimizationAlgo(OptimizationAlgorithm.LBFGS)
+                .momentum(0.5) // Speed of modifying learning rate
+                .optimizationAlgo(OptimizationAlgorithm.STOCHASTIC_GRADIENT_DESCENT)
                         // ^^ Calculates gradients
-                .constrainGradientToUnitNorm(true)
                 .build()
         val model: Layer = LayerFactories.getFactory(conf.getLayer()).create(conf)
         model.setListeners(Seq[IterationListener](new ScoreIterationListener(listenerFreq)).asJava)
