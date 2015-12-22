@@ -2,30 +2,30 @@ package org.deeplearning4j.examples.convolution
 
 import java.util.Random
 
-import scala.collection.JavaConverters._
-
-import org.deeplearning4j.datasets.iterator.DataSetIterator
 import org.deeplearning4j.datasets.iterator.impl.IrisDataSetIterator
 import org.deeplearning4j.eval.Evaluation
 import org.deeplearning4j.nn.api.OptimizationAlgorithm
-import org.deeplearning4j.nn.conf.{MultiLayerConfiguration, NeuralNetConfiguration}
-import org.deeplearning4j.nn.conf.layers.{ConvolutionLayer, OutputLayer}
 import org.deeplearning4j.nn.conf.layers.setup.ConvolutionLayerSetup
+import org.deeplearning4j.nn.conf.layers.{ConvolutionLayer, OutputLayer}
+import org.deeplearning4j.nn.conf.{MultiLayerConfiguration, NeuralNetConfiguration}
 import org.deeplearning4j.nn.multilayer.MultiLayerNetwork
 import org.deeplearning4j.nn.params.DefaultParamInitializer
 import org.deeplearning4j.nn.weights.WeightInit
 import org.deeplearning4j.optimize.api.IterationListener
 import org.deeplearning4j.optimize.listeners.ScoreIterationListener
 import org.nd4j.linalg.api.ndarray.INDArray
-import org.nd4j.linalg.dataset.{DataSet, SplitTestAndTrain}
+import org.nd4j.linalg.factory.Nd4j
 import org.nd4j.linalg.lossfunctions.LossFunctions
 import org.slf4j.LoggerFactory
+
+import scala.collection.JavaConverters._
 
 object CNNIrisExample {
 
   lazy val log = LoggerFactory.getLogger(CNNIrisExample.getClass)
 
   def main(args: Array[String]) = {
+
 
     val numRows = 2
     val numColumns = 2
@@ -38,16 +38,17 @@ object CNNIrisExample {
     val seed = 123
     val listenerFreq = 1
 
-
     /**
       *Set a neural network configuration with multiple layers
       */
-    log.info("Load data....")
-    val irisIter: DataSetIterator = new IrisDataSetIterator(batchSize, numSamples)
-    val iris: DataSet = irisIter.next()
-    iris.normalizeZeroMeanZeroUnitVariance()
 
-    val trainTest: SplitTestAndTrain = iris.splitTestAndTrain(splitTrainNum, new Random(seed))
+    log.info("Load data....")
+    val irisIter = new IrisDataSetIterator(150, 150)
+    val iris = irisIter.next()
+    iris.normalizeZeroMeanZeroUnitVariance()
+    Nd4j.shuffle(iris.getFeatureMatrix(), new Random(seed), 1)
+    Nd4j.shuffle(iris.getLabels(),new Random(seed),1)
+    val trainTest = iris.splitTestAndTrain(splitTrainNum, new Random(seed))
 
     val builder = new NeuralNetConfiguration.Builder()
       .seed(seed)
@@ -67,7 +68,7 @@ object CNNIrisExample {
         .build())
       .backprop(true).pretrain(false)
 
-    new ConvolutionLayerSetup(builder, numRows, numColumns, nChannels);
+    new ConvolutionLayerSetup(builder, numRows, numColumns, nChannels)
 
     val conf: MultiLayerConfiguration = builder.build()
 
