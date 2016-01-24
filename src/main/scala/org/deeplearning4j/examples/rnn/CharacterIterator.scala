@@ -158,6 +158,8 @@ class CharacterIterator(textFilePath: String, textFileEncoding: Charset, miniBat
 
   def setPreProcessor(preProcessor: DataSetPreProcessor): Unit = throw new UnsupportedOperationException("Not implemented")
 
+  override def getLabels: java.util.List[String] = throw new UnsupportedOperationException("Not implemented")
+
   override def remove(): Unit = throw new UnsupportedOperationException()
 
 }

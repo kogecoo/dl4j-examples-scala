@@ -149,10 +149,10 @@ object VideoClassificationExample {
         val nTrainEpochs = 15
         (0 until nTrainEpochs).foreach { i =>
             val trainData: DataSetIterator = getDataSetIterator(dataDirectory, 0, nTrain - 1, miniBatchSize)
-            while(trainData.hasNext())
+            while(trainData.hasNext)
                 net.fit(trainData.next())
             Nd4j.saveBinary(net.params(),new File("videomodel.bin"))
-            FileUtils.saveString2File(conf.toJson(),new File("videoconf.json"))
+            FileUtils.saveString2File(conf.toJson,new File("videoconf.json"))
             System.out.println("Epoch " + i + " complete")
 
             //Evaluate classification performance:
@@ -225,7 +225,7 @@ object VideoClassificationExample {
         conf.set(CodecRecordReader.COLUMNS, String.valueOf(V_HEIGHT))
         val crr = new CodecRecordReader()
         crr.initialize(conf, is)
-        return crr
+        crr
     }
 
     private[this] def getLabelsReader(path: String, startIdx: Int, num: Int): SequenceRecordReader = {
@@ -237,7 +237,7 @@ object VideoClassificationExample {
 
     private[this] class VideoPreProcessor extends DataSetPreProcessor {
         def preProcess(toPreProcess: api.DataSet): Unit = {
-            toPreProcess.getFeatureMatrix().divi(255) //[0,255] -> [0,1] for input pixel values
+            toPreProcess.getFeatureMatrix.divi(255) //[0,255] -> [0,1] for input pixel values
         }
     }
 

@@ -27,7 +27,7 @@ object Word2VecRawTextExample {
         t.setTokenPreProcessor(new CommonPreprocessor())
 
         val cache = new InMemoryLookupCache()
-        val table: WeightLookupTable = new InMemoryLookupTable.Builder()
+        val table = new InMemoryLookupTable.Builder()
                 .vectorLength(100)
                 .useAdaGrad(false)
                 .cache(cache)

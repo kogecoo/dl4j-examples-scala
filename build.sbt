@@ -8,12 +8,12 @@ lazy val root = project.in(file("."))
 
 libraryDependencies ++= Seq(
   "commons-io" % "commons-io" % "2.4",
-  "org.deeplearning4j" % "deeplearning4j-core" % "0.4-rc3.7",
-  "org.deeplearning4j" % "deeplearning4j-nlp" % "0.4-rc3.7",
+  "org.deeplearning4j" % "deeplearning4j-core" % "0.4-rc3.8",
+  "org.deeplearning4j" % "deeplearning4j-nlp" % "0.4-rc3.8",
   "org.jblas" % "jblas" % "1.2.4",
-  "org.nd4j" % "canova-nd4j-codec" % "0.0.0.13",
-  "org.nd4j" % "canova-nd4j-image" % "0.0.0.13",
-  "org.nd4j" % "nd4j-x86" % "0.4-rc3.7"
+  "org.nd4j" % "canova-nd4j-codec" % "0.0.0.14",
+  "org.nd4j" % "canova-nd4j-image" % "0.0.0.14",
+  "org.nd4j" % "nd4j-x86" % "0.4-rc3.8"
 )
 
 
