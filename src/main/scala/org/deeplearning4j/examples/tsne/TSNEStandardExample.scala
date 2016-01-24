@@ -26,8 +26,8 @@ object TSNEStandardExample {
 
         log.info("Load & Vectorize data....")
         val wordFile: File = new ClassPathResource("words.txt").getFile()
-        val vectors: Pair[InMemoryLookupTable, VocabCache]  = WordVectorSerializer.loadTxt(wordFile)
-        val cache: VocabCache = vectors.getSecond()
+        val vectors  = WordVectorSerializer.loadTxt(wordFile)
+        val cache = vectors.getSecond()
         val weights: INDArray = vectors.getFirst().getSyn0()
 
         (0 until cache.numWords).foreach { i => cacheListBuilder += cache.wordAtIndex(i) }

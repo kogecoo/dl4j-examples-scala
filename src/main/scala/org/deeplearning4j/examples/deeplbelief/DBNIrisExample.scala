@@ -125,7 +125,7 @@ object DBNIrisExample {
         dis.close()
         val savedNetwork = new MultiLayerNetwork(confFromJson)
         savedNetwork.init()
-        savedNetwork.setParameters(newParams)
+        savedNetwork.setParams(newParams)
         System.out.println("Original network params " + model.params())
         System.out.println(savedNetwork.params())
 

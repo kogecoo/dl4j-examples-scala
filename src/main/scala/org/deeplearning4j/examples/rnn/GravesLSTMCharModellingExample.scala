@@ -25,8 +25,7 @@ import org.nd4j.linalg.lossfunctions.LossFunctions.LossFunction
   "The Unreasonable Effectiveness of Recurrent Neural Networks"
   http://karpathy.github.io/2015/05/21/rnn-effectiveness/
 
-  Note that this example has not been tuned - better performance is likely possible with better hyperparameters
-  It will also take quite some time on CPU (single core)
+  Note that this example has not been well tuned - better performance is likely possible with better hyperparameters
 
   Some differences between this example and Karpathy's work:
   - The LSTM architectures appear to differ somewhat. GravesLSTM has peephole connections that
@@ -35,6 +34,9 @@ import org.nd4j.linalg.lossfunctions.LossFunctions.LossFunction
     model but has more parameters per unit), though they are not radically different in practice.
   - Karpathy uses truncated backpropagation through time (BPTT) on full character
     sequences, whereas this example uses standard (non-truncated) BPTT on partial/subset sequences.
+    Truncated BPTT is probably the preferred method of training for this sort of problem, and is configurable
+    using the .backpropType(BackpropType.TruncatedBPTT).tBPTTForwardLength().tBPTTBackwardLength() options
+
     Truncated BPTT is probably the preferred method of training for this sort of problem, and will
     be added to DL4J (and this example) in the future.
 
@@ -45,7 +47,7 @@ object GravesLSTMCharModellingExample {
   def main(args: Array[String]) = {
     val lstmLayerSize = 200          //Number of units in each GravesLSTM layer
     val miniBatchSize = 32            //Size of mini batch to use when  training
-    val examplesPerEpoch = 50*miniBatchSize  //i.e., how many examples to learn on between generating samples
+    val examplesPerEpoch = 50 * miniBatchSize  //i.e., how many examples to learn on between generating samples
     val exampleLength = 100          //Length of each training example
     val numEpochs = 30              //Total number of training + sample generation epochs
     val nSamplesToGenerate = 4          //Number of samples to generate after each training epoch

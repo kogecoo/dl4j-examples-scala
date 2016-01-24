@@ -7,7 +7,7 @@ import org.deeplearning4j.eval.Evaluation
 import org.deeplearning4j.nn.api.OptimizationAlgorithm
 import org.deeplearning4j.nn.conf.layers.setup.ConvolutionLayerSetup
 import org.deeplearning4j.nn.conf.layers.{ConvolutionLayer, OutputLayer, SubsamplingLayer}
-import org.deeplearning4j.nn.conf.{MultiLayerConfiguration, NeuralNetConfiguration}
+import org.deeplearning4j.nn.conf.{GradientNormalization, MultiLayerConfiguration, NeuralNetConfiguration}
 import org.deeplearning4j.nn.multilayer.MultiLayerNetwork
 import org.deeplearning4j.nn.weights.WeightInit
 import org.deeplearning4j.optimize.api.IterationListener
@@ -45,12 +45,12 @@ object CNNMnistExample {
         log.info("Build model....")
       val builder: MultiLayerConfiguration.Builder = new NeuralNetConfiguration.Builder()
                 .seed(seed)
-                .batchSize(batchSize)
                 .iterations(iterations)
-                .constrainGradientToUnitNorm(true)
+                .gradientNormalization(GradientNormalization.RenormalizeL2PerLayer)
                 .optimizationAlgo(OptimizationAlgorithm.STOCHASTIC_GRADIENT_DESCENT)
                 .list(3)
                 .layer(0, new ConvolutionLayer.Builder(10, 10)
+                        .stride(2, 2)
                         .nIn(nChannels)
                         .nOut(6)
                         .weightInit(WeightInit.XAVIER)
@@ -88,7 +88,7 @@ object CNNMnistExample {
         log.info("Evaluate weights....")
 
         log.info("Evaluate model....")
-        val eval: Evaluation = new Evaluation(outputNum)
+        val eval = new Evaluation(outputNum)
         testInput.zip(testLabels).foreach { case (input, label) =>
           val output: INDArray = model.output(input)
           eval.eval(label, output)

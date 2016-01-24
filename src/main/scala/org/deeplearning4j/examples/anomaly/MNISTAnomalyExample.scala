@@ -105,7 +105,7 @@ object MNISTAnomalyExample {
       val nRows    = testData.rows()
       (0 until nRows).foreach { j =>
         val example: INDArray = testData.getRow(j)
-        val label = labels.getDouble(j).asInstanceOf[Int]
+        val label = labels.getDouble(j).toInt
         val score = net.score(new DataSet(example, example))
         val arr = listsByDigit.getOrElseUpdate(label, mutable.ArrayBuffer.empty[(Double, Int, INDArray)])
         arr += ((score, count, example))
@@ -165,7 +165,7 @@ object MNISTAnomalyExample {
       digits.map { arr =>
         val bi = new BufferedImage(28, 28, BufferedImage.TYPE_BYTE_GRAY)
         (0 until 768).foreach { i =>
-          bi.getRaster.setSample(i % 28, i / 28, 0, 255 * arr.getDouble(i).asInstanceOf[Int])
+          bi.getRaster.setSample(i % 28, i / 28, 0, 255 * arr.getDouble(i).toInt)
         }
         val orig = new ImageIcon(bi)
         val imageScaled: Image = orig.getImage.getScaledInstance((imageScale * 28).asInstanceOf[Int], (imageScale * 28).asInstanceOf[Int], Image.SCALE_REPLICATE)

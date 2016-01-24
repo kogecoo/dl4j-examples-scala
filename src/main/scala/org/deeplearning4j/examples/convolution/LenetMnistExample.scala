@@ -7,7 +7,7 @@ import org.deeplearning4j.eval.Evaluation
 import org.deeplearning4j.nn.api.OptimizationAlgorithm
 import org.deeplearning4j.nn.conf.layers.setup.ConvolutionLayerSetup
 import org.deeplearning4j.nn.conf.layers.{ConvolutionLayer, DenseLayer, OutputLayer, SubsamplingLayer}
-import org.deeplearning4j.nn.conf.{MultiLayerConfiguration, NeuralNetConfiguration}
+import org.deeplearning4j.nn.conf.{GradientNormalization, MultiLayerConfiguration, NeuralNetConfiguration}
 import org.deeplearning4j.nn.multilayer.MultiLayerNetwork
 import org.deeplearning4j.nn.weights.WeightInit
 import org.deeplearning4j.optimize.listeners.ScoreIterationListener
@@ -47,14 +47,15 @@ object LenetMnistExample {
         log.info("Build model....")
         val builder: MultiLayerConfiguration.Builder = new NeuralNetConfiguration.Builder()
                 .seed(seed)
-                .batchSize(batchSize)
                 .iterations(iterations).useDropConnect(true)
-                .constrainGradientToUnitNorm(true).regularization(true)
+                .gradientNormalization(GradientNormalization.RenormalizeL2PerLayer)
+                .regularization(true)
                 .l2(2e-3)
                 .optimizationAlgo(OptimizationAlgorithm.STOCHASTIC_GRADIENT_DESCENT)
                 .list(6)
                 .layer(0, new ConvolutionLayer.Builder(5, 5)
                         .nIn(nChannels)
+                        .stride(2, 2)
                         .nOut(20).dropOut(0.5)
                         .weightInit(WeightInit.XAVIER)
                         .activation("relu")
@@ -64,13 +65,14 @@ object LenetMnistExample {
                 .layer(2, new ConvolutionLayer.Builder(5, 5)
                         .nIn(nChannels)
                         .nOut(50)
+                        .stride(2, 2)
                         .weightInit(WeightInit.XAVIER)
                         .activation("relu")
                         .build())
                 .layer(3, new SubsamplingLayer.Builder(SubsamplingLayer.PoolingType.MAX, Array[Int](2, 2))
                         .build())
-                  .layer(4,new DenseLayer.Builder().activation("tanh")
-                          .nOut(500).build())
+                .layer(4,new DenseLayer.Builder().activation("tanh")
+                        .nOut(500).build())
                 .layer(5, new OutputLayer.Builder(LossFunctions.LossFunction.NEGATIVELOGLIKELIHOOD)
                         .nOut(outputNum)
                         .weightInit(WeightInit.XAVIER)

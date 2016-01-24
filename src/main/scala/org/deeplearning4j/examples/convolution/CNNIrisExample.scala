@@ -8,7 +8,7 @@ import org.deeplearning4j.eval.Evaluation
 import org.deeplearning4j.nn.api.OptimizationAlgorithm
 import org.deeplearning4j.nn.conf.layers.setup.ConvolutionLayerSetup
 import org.deeplearning4j.nn.conf.layers.{ConvolutionLayer, OutputLayer}
-import org.deeplearning4j.nn.conf.{MultiLayerConfiguration, NeuralNetConfiguration}
+import org.deeplearning4j.nn.conf.{GradientNormalization, MultiLayerConfiguration, NeuralNetConfiguration}
 import org.deeplearning4j.nn.multilayer.MultiLayerNetwork
 import org.deeplearning4j.nn.params.DefaultParamInitializer
 import org.deeplearning4j.nn.weights.WeightInit
@@ -52,9 +52,8 @@ object CNNIrisExample {
         val builder: MultiLayerConfiguration.Builder = new NeuralNetConfiguration.Builder()
                 .seed(seed)
                 .iterations(iterations)
-                .batchSize(batchSize)
+                .gradientNormalization(GradientNormalization.RenormalizeL2PerLayer)
                 .optimizationAlgo(OptimizationAlgorithm.STOCHASTIC_GRADIENT_DESCENT)
-                .constrainGradientToUnitNorm(true)
                 .l2(2e-4)
                 .regularization(true)
                 .useDropConnect(true)
@@ -71,7 +70,6 @@ object CNNIrisExample {
                         .weightInit(WeightInit.XAVIER)
                         .activation("softmax")
                         .build())
-
                 .backprop(true).pretrain(false)
         new ConvolutionLayerSetup(builder, numRows, numColumns, nChannels);
 
@@ -92,7 +90,7 @@ object CNNIrisExample {
         }
 
         log.info("Evaluate model....")
-        val eval: Evaluation = new Evaluation(outputNum)
+        val eval = new Evaluation(outputNum)
         val output: INDArray = model.output(trainTest.getTest().getFeatureMatrix())
         eval.eval(trainTest.getTest().getLabels(), output)
         log.info(eval.stats())

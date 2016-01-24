@@ -8,14 +8,14 @@ lazy val root = project.in(file("."))
 
 libraryDependencies ++= Seq(
   "commons-io" % "commons-io" % "2.4",
-  "org.deeplearning4j" % "deeplearning4j-core" % "0.4-rc3.4",
-  "org.deeplearning4j" % "deeplearning4j-nlp" % "0.4-rc3.4",
-  "org.deeplearning4j" % "deeplearning4j-ui" % "0.4-rc3.4",
+  "org.deeplearning4j" % "deeplearning4j-core" % "0.4-rc3.7",
+  "org.deeplearning4j" % "deeplearning4j-nlp" % "0.4-rc3.7",
   "org.jblas" % "jblas" % "1.2.4",
-  "org.nd4j" % "canova-nd4j-image" % "0.0.0.11",
-  "org.nd4j" % "nd4j-jblas" % "0.4-rc3.5",
-  "org.nd4j" % "nd4j-x86" % "0.4-rc3.5"
+  "org.nd4j" % "canova-nd4j-codec" % "0.0.0.13",
+  "org.nd4j" % "canova-nd4j-image" % "0.0.0.13",
+  "org.nd4j" % "nd4j-x86" % "0.4-rc3.7"
 )
+
 
 resolvers += "Sonatype OSS Snapshots" at "https://oss.sonatype.org/content/repositories/snapshots"
 

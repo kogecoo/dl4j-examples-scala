@@ -132,14 +132,6 @@ class CharacterIterator(textFilePath: String, textFileEncoding: Charset, miniBat
         val nextCharIdx: Int = charToIdxMap.get(fileCharacters(j));    //Next character to predict
         input.putScalar(Array[Int](i, currCharIdx, c), 1.0)
         labels.putScalar(Array[Int](i, nextCharIdx, c), 1.0)
-        val temp: Float = input.getFloat(Array[Int](i, currCharIdx, c))
-        val temp2: Float = labels.getFloat(Array[Int](i,nextCharIdx,c))
-        if(temp != 1.0f){
-          throw new RuntimeException()
-        }
-        if(temp2 != 1.0f){
-          throw new RuntimeException()
-        }
         currCharIdx = nextCharIdx
         c += 1
       }

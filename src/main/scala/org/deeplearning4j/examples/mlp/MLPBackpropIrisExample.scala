@@ -4,7 +4,7 @@ import org.deeplearning4j.datasets.iterator.DataSetIterator
 import org.deeplearning4j.datasets.iterator.impl.IrisDataSetIterator
 import org.deeplearning4j.eval.Evaluation
 import org.deeplearning4j.nn.conf.layers.{DenseLayer, OutputLayer}
-import org.deeplearning4j.nn.conf.{MultiLayerConfiguration, NeuralNetConfiguration}
+import org.deeplearning4j.nn.conf.{GradientNormalization, MultiLayerConfiguration, NeuralNetConfiguration}
 import org.deeplearning4j.nn.multilayer.MultiLayerNetwork
 import org.deeplearning4j.nn.params.DefaultParamInitializer
 import org.deeplearning4j.nn.weights.WeightInit
@@ -46,7 +46,7 @@ object MLPBackpropIrisExample {
 
                 .learningRate(1e-3)
                 .l1(0.3).regularization(true).l2(1e-3)
-                .constrainGradientToUnitNorm(true)
+                .gradientNormalization(GradientNormalization.RenormalizeL2PerLayer)
                 .list(3)
                 .layer(0, new DenseLayer.Builder().nIn(numInputs).nOut(3)
                         .activation("tanh")
@@ -83,7 +83,7 @@ object MLPBackpropIrisExample {
 
 
         log.info("Evaluate model....")
-        val eval: Evaluation = new Evaluation(outputNum)
+        val eval = new Evaluation(outputNum)
         val iterTest: DataSetIterator = new IrisDataSetIterator(numSamples, numSamples);
         val test: DataSet = iterTest.next()
         test.normalizeZeroMeanZeroUnitVariance()

@@ -8,7 +8,7 @@ import org.deeplearning4j.eval.Evaluation
 import org.deeplearning4j.nn.api.OptimizationAlgorithm
 import org.deeplearning4j.nn.conf.layers.setup.ConvolutionLayerSetup
 import org.deeplearning4j.nn.conf.layers.{ConvolutionLayer, OutputLayer, SubsamplingLayer}
-import org.deeplearning4j.nn.conf.{MultiLayerConfiguration, NeuralNetConfiguration}
+import org.deeplearning4j.nn.conf.{GradientNormalization, MultiLayerConfiguration, NeuralNetConfiguration}
 import org.deeplearning4j.nn.multilayer.MultiLayerNetwork
 import org.deeplearning4j.nn.weights.WeightInit
 import org.deeplearning4j.optimize.api.IterationListener
@@ -19,7 +19,8 @@ import org.nd4j.linalg.lossfunctions.LossFunctions
 import org.slf4j.{Logger, LoggerFactory}
 
 import scala.collection.JavaConverters._
-import scala.collection.mutable.ArrayBuilder
+import scala.collection.mutable
+
 
 /**
  * @author Adam Gibson
@@ -38,8 +39,8 @@ object CNNLFWDataSet {
         val splitTrainNum = (batchSize*.8).toInt
         val seed = 123
         val listenerFreq = iterations/5
-        val testInputBuilder = ArrayBuilder.make[INDArray]
-        val testLabelsBuilder = ArrayBuilder.make[INDArray]
+        val testInputBuilder = mutable.ArrayBuilder.make[INDArray]
+        val testLabelsBuilder = mutable.ArrayBuilder.make[INDArray]
 
 
         log.info("Load data.....")
@@ -48,9 +49,8 @@ object CNNLFWDataSet {
         log.info("Build model....")
         val builder: MultiLayerConfiguration.Builder = new NeuralNetConfiguration.Builder()
                 .seed(seed)
-                .batchSize(batchSize)
                 .iterations(iterations)
-                .constrainGradientToUnitNorm(true)
+                .gradientNormalization(GradientNormalization.RenormalizeL2PerLayer)
                 .optimizationAlgo(OptimizationAlgorithm.STOCHASTIC_GRADIENT_DESCENT)
                 .list(3)
                 .layer(0, new ConvolutionLayer.Builder(10, 10)
@@ -90,7 +90,7 @@ object CNNLFWDataSet {
         val testLabels = testLabelsBuilder.result
 
         log.info("Evaluate model....")
-        val eval: Evaluation = new Evaluation(outputNum)
+        val eval = new Evaluation(outputNum)
         testInput.zip(testLabels).foreach { case (input, label) =>
           val output: INDArray = model.output(input)
           eval.eval(label, output)

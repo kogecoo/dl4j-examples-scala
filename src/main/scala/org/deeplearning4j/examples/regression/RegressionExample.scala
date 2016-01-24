@@ -7,7 +7,7 @@ import org.deeplearning4j.datasets.canova.RecordReaderDataSetIterator
 import org.deeplearning4j.datasets.iterator.DataSetIterator
 import org.deeplearning4j.nn.api.OptimizationAlgorithm
 import org.deeplearning4j.nn.conf.layers.OutputLayer
-import org.deeplearning4j.nn.conf.{MultiLayerConfiguration, NeuralNetConfiguration}
+import org.deeplearning4j.nn.conf.{GradientNormalization, MultiLayerConfiguration, NeuralNetConfiguration}
 import org.deeplearning4j.nn.multilayer.MultiLayerNetwork
 import org.deeplearning4j.nn.weights.WeightInit
 import org.deeplearning4j.optimize.listeners.ScoreIterationListener
@@ -28,7 +28,8 @@ object RegressionExample {
                 .iterations(iterations) // # training iterations predict/classify & backprop
                 .learningRate(1e-3f) // Optimization step size
                 .optimizationAlgo(OptimizationAlgorithm.LBFGS) // Backprop method (calculate the gradients)
-                .constrainGradientToUnitNorm(true).l2(2e-4).regularization(true)
+                .gradientNormalization(GradientNormalization.RenormalizeL2PerLayer)
+                .l2(2e-4).regularization(true)
                 .list(1) // # NN layers (does not count input layer)
                 .layer(0, new OutputLayer.Builder(LossFunctions.LossFunction.MSE)
                                 .nIn(12) // # input nodes
