@@ -24,15 +24,19 @@ object Cifar {
         System.out.println(util.Arrays.toString(dataSet.getFeatureMatrix.shape()))
         val nChannels = 3
         val outputNum = 10
+        val numSamples = 2000
+        val batchSize = 500
         val iterations = 10
+        val splitTrainNum = (batchSize*.8).toInt
         val seed = 123
+        val listenerFreq = iterations/5
 
         //setup the network
         val builder: MultiLayerConfiguration.Builder = new NeuralNetConfiguration.Builder()
                 .seed(seed)
                 .iterations(iterations).regularization(true)
                 .l1(1e-1).l2(2e-4).useDropConnect(true)
-                .gradientNormalization(GradientNormalization.RenormalizeL2PerLayer)
+                .gradientNormalization(GradientNormalization.RenormalizeL2PerLayer) // TODO confirm this is required
                 .miniBatch(true)
                 .optimizationAlgo(OptimizationAlgorithm.CONJUGATE_GRADIENT)
                 .list(6)
@@ -43,16 +47,16 @@ object Cifar {
                         .activation("relu")
                         .build())
                 .layer(1, new SubsamplingLayer
-                        .Builder(SubsamplingLayer.PoolingType.MAX, Array(2, 2))
+                .Builder(SubsamplingLayer.PoolingType.MAX, Array[Int](2, 2))
                         .build())
                 .layer(2, new ConvolutionLayer.Builder(3, 3)
                         .nOut(10).dropOut(0.5)
-                          .stride(2, 2)
+                        .stride(2, 2)
                         .weightInit(WeightInit.XAVIER)
                         .activation("relu")
                         .build())
                 .layer(3, new SubsamplingLayer
-                        .Builder(SubsamplingLayer.PoolingType.MAX, Array(2, 2))
+                .Builder(SubsamplingLayer.PoolingType.MAX, Array[Int](2, 2))
                         .build())
                 .layer(4, new DenseLayer.Builder().nOut(100).activation("relu")
                         .build())
@@ -67,8 +71,6 @@ object Cifar {
         val conf: MultiLayerConfiguration = builder.build()
         val network: MultiLayerNetwork = new MultiLayerNetwork(conf)
         network.fit(dataSet)
-
     }
-
 
 }

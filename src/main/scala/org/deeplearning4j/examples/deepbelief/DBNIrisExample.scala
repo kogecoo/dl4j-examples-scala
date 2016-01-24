@@ -14,15 +14,12 @@ import org.deeplearning4j.nn.conf.{MultiLayerConfiguration, NeuralNetConfigurati
 import org.deeplearning4j.nn.multilayer.MultiLayerNetwork
 import org.deeplearning4j.nn.params.DefaultParamInitializer
 import org.deeplearning4j.nn.weights.WeightInit
-import org.deeplearning4j.optimize.api.IterationListener
 import org.deeplearning4j.optimize.listeners.ScoreIterationListener
 import org.nd4j.linalg.api.ndarray.INDArray
 import org.nd4j.linalg.dataset.{DataSet, SplitTestAndTrain}
 import org.nd4j.linalg.factory.Nd4j
 import org.nd4j.linalg.lossfunctions.LossFunctions
 import org.slf4j.LoggerFactory
-
-import scala.collection.JavaConverters._
 
 object DBNIrisExample {
 
@@ -85,7 +82,7 @@ object DBNIrisExample {
         model.init()
 
 
-        model.setListeners(Seq[IterationListener](new ScoreIterationListener(listenerFreq)).asJava)
+        model.setListeners(new ScoreIterationListener(listenerFreq))
         log.info("Train model....")
         model.fit(train)
 
@@ -97,18 +94,10 @@ object DBNIrisExample {
 
         log.info("Evaluate model....")
         val eval = new Evaluation(outputNum)
-        (0 until 2).foreach { j =>
-            val output = model.output(test.getFeatureMatrix, Layer.TrainingMode.TEST)
 
-            (0 until output.rows()).foreach { i =>
-                val actual = train.getLabels.getRow(i).toString.trim()
-                val predicted = output.getRow(i).toString.trim()
-                log.info("actual " + actual + " vs predicted " + predicted)
-            }
+        eval.eval(test.getLabels, model.output(test.getFeatureMatrix, Layer.TrainingMode.TEST))
+        log.info(eval.stats())
 
-            eval.eval(test.getLabels, output)
-            log.info(eval.stats())
-        }
         log.info("****************Example finished********************")
 
         val fos: OutputStream = Files.newOutputStream(Paths.get("coefficients.bin"))

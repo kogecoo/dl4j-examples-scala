@@ -1,6 +1,6 @@
 package org.deeplearning4j.examples.convolution
 
-import java.util.Random
+import java.util.{Collections, Random}
 
 import org.canova.image.loader.LFWLoader
 import org.deeplearning4j.datasets.iterator.DataSetIterator
@@ -19,17 +19,26 @@ import org.nd4j.linalg.dataset.DataSet
 import org.nd4j.linalg.lossfunctions.LossFunctions
 import org.slf4j.{Logger, LoggerFactory}
 
-import scala.collection.JavaConverters._
 import scala.collection.mutable
 
 
 /**
- * Reference: architecture partially based on DeepFace: http://mmlab.ie.cuhk.edu.hk/pdf/YiSun_CVPR14.pdf
+ * Labeled Faces in the Wild is a data set created by Erik Learned-Miller, Gary Huang, Aruni RoyChowdhury,
+ * Haoxiang Li, Gang Hua. This is used to study unconstrained face recognition. There are over 13K images.
+ * Each face has been labeled with the name of the person pictured.
+ *
+ * 5749 unique classes (different people)
+ * 1680 people have 2+ photos
+ *
+ * References:
+ * General information is at http://vis-www.cs.umass.edu/lfw/. Architecture partially based on DeepFace:
+ * http://mmlab.ie.cuhk.edu.hk/pdf/YiSun_CVPR14.pdf
+ *
  * Note: this is a sparse dataset with only 1 example for many of the faces; thus, performance is low.
- * Ideally train on a larger dataset like celebs to get params.
+ * Ideally train on a larger dataset like celebs to get params and/or generate variations of the image examples.
  *
  * Currently set to only use the subset images, names starting with A.
- * Switch to NUM_LABELS & NUM_IMAGES to use full dataset.
+ * Switch to NUM_LABELS & NUM_IMAGES and set subset to false to use full dataset.
  */
 
 object CNNLFWExample {
@@ -39,20 +48,21 @@ object CNNLFWExample {
         val numRows = 40
         val numColumns = 40
         val nChannels = 3
-        val outputNum = LFWLoader.SUB_NUM_LABELS
-        val numSamples = LFWLoader.SUB_NUM_IMAGES - 4
-        val batchSize = numSamples / 10
+        val outputNum = LFWLoader.NUM_LABELS
+        val numSamples = 1000 // LFWLoader.NUM_IMAGES
+        val useSubset = false
+
+        val batchSize = 200 // numSamples/10
         val iterations = 5
         val splitTrainNum = (batchSize*.8).toInt
         val seed = 123
         val listenerFreq = iterations/5
-        val useSubset = true
         val testInputBuilder = mutable.ArrayBuilder.make[INDArray]
         val testLabelsBuilder = mutable.ArrayBuilder.make[INDArray]
 
 
         log.info("Load data.....")
-        val lfw: DataSetIterator = new LFWDataSetIterator(batchSize, numSamples, Array[Int](numRows, numColumns, nChannels), outputNum, useSubset, new Random(seed))
+        val lfw: DataSetIterator = new LFWDataSetIterator(batchSize, numSamples, Array[Int](numRows, numColumns, nChannels), outputNum, false, new Random(seed))
 
         log.info("Build model....")
         val builder: MultiLayerConfiguration.Builder = new NeuralNetConfiguration.Builder()
@@ -114,7 +124,7 @@ object CNNLFWExample {
         model.init()
 
         log.info("Train model....")
-        model.setListeners(Seq[IterationListener](new ScoreIterationListener(listenerFreq)).asJava)
+        model.setListeners(Collections.singletonList(new ScoreIterationListener(listenerFreq).asInstanceOf[IterationListener]))
 
 
         while(lfw.hasNext) {

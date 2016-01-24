@@ -6,16 +6,14 @@ import java.util.Collections
 import org.deeplearning4j.datasets.iterator.impl.MnistDataSetIterator
 import org.deeplearning4j.eval.Evaluation
 import org.deeplearning4j.nn.api.OptimizationAlgorithm
-import org.deeplearning4j.nn.conf.{GradientNormalization, NeuralNetConfiguration, Updater}
 import org.deeplearning4j.nn.conf.layers.{OutputLayer, RBM}
+import org.deeplearning4j.nn.conf.{GradientNormalization, NeuralNetConfiguration}
 import org.deeplearning4j.nn.multilayer.MultiLayerNetwork
 import org.deeplearning4j.nn.weights.WeightInit
 import org.deeplearning4j.optimize.api.IterationListener
 import org.deeplearning4j.optimize.listeners.ScoreIterationListener
 import org.nd4j.linalg.lossfunctions.LossFunctions.LossFunction
 import org.slf4j.LoggerFactory
-
-import scala.collection.JavaConverters._
 
 object DBNMnistFullExample {
 
@@ -66,7 +64,7 @@ object DBNMnistFullExample {
 
         val model = new MultiLayerNetwork(conf)
         model.init()
-        model.setListeners(Seq[IterationListener](new ScoreIterationListener(listenerFreq)).asJava)
+        model.setListeners(Collections.singletonList(new ScoreIterationListener(listenerFreq).asInstanceOf[IterationListener]))
 
         log.info("Train model....")
         model.fit(iter); // achieves end to end pre-training
