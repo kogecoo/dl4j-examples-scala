@@ -25,7 +25,7 @@ import scala.collection.mutable
 /**
  * @author Adam Gibson
  */
-object CNNLFWDataSet {
+object CNNLFWExample {
     lazy val log: Logger = LoggerFactory.getLogger(CNNMnistExample.getClass)
 
     def main(args: Array[String]) = {
