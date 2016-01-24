@@ -16,6 +16,7 @@ import org.deeplearning4j.optimize.api.IterationListener
 import org.deeplearning4j.optimize.listeners.ScoreIterationListener
 import org.nd4j.linalg.api.ndarray.INDArray
 import org.nd4j.linalg.dataset.{DataSet, SplitTestAndTrain}
+import org.nd4j.linalg.factory.Nd4j
 import org.nd4j.linalg.lossfunctions.LossFunctions
 import org.slf4j.LoggerFactory
 
@@ -32,7 +33,7 @@ object CNNIrisExample {
         val nChannels = 1
         val outputNum = 3
         val numSamples = 150
-        val batchSize = 110
+        val batchSize = 150
         val iterations = 10
         val splitTrainNum = 100
         val seed = 123
@@ -46,26 +47,23 @@ object CNNIrisExample {
         val irisIter: DataSetIterator = new IrisDataSetIterator(batchSize, numSamples)
         val iris: DataSet = irisIter.next()
         iris.normalizeZeroMeanZeroUnitVariance()
-
+        System.out.println("Loaded " + iris.labelCounts)
+        Nd4j.shuffle(iris.getFeatureMatrix, new Random(seed), 1)
+        Nd4j.shuffle(iris.getLabels, new Random(seed), 1)
         val trainTest: SplitTestAndTrain = iris.splitTestAndTrain(splitTrainNum, new Random(seed))
 
         val builder: MultiLayerConfiguration.Builder = new NeuralNetConfiguration.Builder()
                 .seed(seed)
                 .iterations(iterations)
-                .gradientNormalization(GradientNormalization.RenormalizeL2PerLayer)
                 .optimizationAlgo(OptimizationAlgorithm.STOCHASTIC_GRADIENT_DESCENT)
-                .l2(2e-4)
-                .regularization(true)
-                .useDropConnect(true)
                 .list(2)
                 .layer(0, new ConvolutionLayer.Builder(Array(1, 1):_*)
                         .nIn(nChannels)
-                        .nOut(6).dropOut(0.5)
+                        .nOut(1000)
                         .activation("relu")
-                        .weightInit(WeightInit.XAVIER)
+                        .weightInit(WeightInit.RELU)
                         .build())
                 .layer(1, new OutputLayer.Builder(LossFunctions.LossFunction.MCXENT)
-                        .nIn(6)
                         .nOut(outputNum)
                         .weightInit(WeightInit.XAVIER)
                         .activation("softmax")
@@ -81,6 +79,7 @@ object CNNIrisExample {
         model.setListeners(Seq[IterationListener](new ScoreIterationListener(listenerFreq)).asJava)
 
         log.info("Train model....")
+        System.out.println("Training on " + trainTest.getTrain.labelCounts())
         model.fit(trainTest.getTrain)
 
         log.info("Evaluate weights....")
@@ -90,6 +89,7 @@ object CNNIrisExample {
         }
 
         log.info("Evaluate model....")
+        System.out.println("Training on " + trainTest.getTest.labelCounts)
         val eval = new Evaluation(outputNum)
         val output: INDArray = model.output(trainTest.getTest.getFeatureMatrix)
         eval.eval(trainTest.getTest.getLabels, output)
