@@ -3,18 +3,16 @@ package org.deeplearning4j.examples.deepbelief
 import org.deeplearning4j.datasets.fetchers.MnistDataFetcher
 import org.deeplearning4j.datasets.iterator.impl.MnistDataSetIterator
 import org.deeplearning4j.nn.api.OptimizationAlgorithm
-import org.deeplearning4j.nn.conf.{ MultiLayerConfiguration, NeuralNetConfiguration }
-import org.deeplearning4j.nn.conf.layers.{ OutputLayer, RBM }
+import org.deeplearning4j.nn.conf.layers.{OutputLayer, RBM}
+import org.deeplearning4j.nn.conf.{MultiLayerConfiguration, NeuralNetConfiguration}
 import org.deeplearning4j.nn.multilayer.MultiLayerNetwork
 import org.deeplearning4j.optimize.api.IterationListener
 import org.deeplearning4j.optimize.listeners.ScoreIterationListener
 import org.nd4j.linalg.dataset.DataSet
 import org.nd4j.linalg.dataset.api.iterator.DataSetIterator
 import org.nd4j.linalg.lossfunctions.LossFunctions
-import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
-import java.util.Arrays
 import scala.collection.JavaConverters._
 
 object DeepAutoEncoderExample {

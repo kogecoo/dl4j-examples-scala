@@ -1,9 +1,9 @@
 package org.deeplearning4j.examples.rnn
 
-import java.io.{ File, IOException }
+import java.io.{File, IOException}
 import java.nio.charset.Charset
 import java.nio.file.Files
-import java.util.{ Arrays, HashMap, LinkedList, List, Map, NoSuchElementException, Random }
+import java.util.{HashMap, Map, NoSuchElementException, Random}
 
 import org.deeplearning4j.datasets.iterator.DataSetIterator
 import org.nd4j.linalg.api.ndarray.INDArray

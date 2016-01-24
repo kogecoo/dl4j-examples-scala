@@ -1,28 +1,22 @@
 package org.deeplearning4j.examples.convolution
 
+import java.util.Random
+
 import org.deeplearning4j.datasets.iterator.impl.MnistDataSetIterator
 import org.deeplearning4j.eval.Evaluation
 import org.deeplearning4j.nn.api.OptimizationAlgorithm
-import org.deeplearning4j.nn.conf.{ MultiLayerConfiguration, NeuralNetConfiguration }
-import org.deeplearning4j.nn.conf.layers.{ ConvolutionLayer, DenseLayer, OutputLayer, SubsamplingLayer }
 import org.deeplearning4j.nn.conf.layers.setup.ConvolutionLayerSetup
+import org.deeplearning4j.nn.conf.layers.{ConvolutionLayer, DenseLayer, OutputLayer, SubsamplingLayer}
+import org.deeplearning4j.nn.conf.{MultiLayerConfiguration, NeuralNetConfiguration}
 import org.deeplearning4j.nn.multilayer.MultiLayerNetwork
 import org.deeplearning4j.nn.weights.WeightInit
-import org.deeplearning4j.optimize.api.IterationListener
 import org.deeplearning4j.optimize.listeners.ScoreIterationListener
 import org.nd4j.linalg.api.buffer.DataBuffer
 import org.nd4j.linalg.api.ndarray.INDArray
-import org.nd4j.linalg.dataset.DataSet
-import org.nd4j.linalg.dataset.SplitTestAndTrain
-import org.nd4j.linalg.dataset.api.iterator.{ DataSetIterator, MultipleEpochsIterator }
+import org.nd4j.linalg.dataset.api.iterator.{DataSetIterator, MultipleEpochsIterator}
 import org.nd4j.linalg.factory.Nd4j
 import org.nd4j.linalg.lossfunctions.LossFunctions
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
-
-import java.util.ArrayList
-import java.util.List
-import java.util.Random
+import org.slf4j.{Logger, LoggerFactory}
 
 import scala.collection.mutable
 

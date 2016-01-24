@@ -1,18 +1,17 @@
 package org.deeplearning4j.examples.word2vec
 
+import java.util.{ArrayList, Collection}
+
 import org.deeplearning4j.models.embeddings.WeightLookupTable
 import org.deeplearning4j.models.embeddings.inmemory.InMemoryLookupTable
 import org.deeplearning4j.models.embeddings.loader.WordVectorSerializer
 import org.deeplearning4j.models.word2vec.Word2Vec
 import org.deeplearning4j.models.word2vec.wordstore.inmemory.InMemoryLookupCache
-import org.deeplearning4j.text.sentenceiterator.{ SentenceIterator, UimaSentenceIterator }
+import org.deeplearning4j.text.sentenceiterator.{SentenceIterator, UimaSentenceIterator}
 import org.deeplearning4j.text.tokenization.tokenizer.preprocessor.CommonPreprocessor
-import org.deeplearning4j.text.tokenization.tokenizerfactory.{ DefaultTokenizerFactory, TokenizerFactory }
-import org.slf4j.Logger
+import org.deeplearning4j.text.tokenization.tokenizerfactory.DefaultTokenizerFactory
 import org.slf4j.LoggerFactory
 import org.springframework.core.io.ClassPathResource
-
-import java.util.{ ArrayList, Collection }
 
 object Word2VecRawTextExample {
 

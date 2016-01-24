@@ -1,10 +1,14 @@
 package org.deeplearning4j.examples.anomaly
 
+import java.awt._
+import java.awt.image.BufferedImage
+import java.util._
+import javax.swing._
+
 import org.deeplearning4j.datasets.iterator.impl.MnistDataSetIterator
 import org.deeplearning4j.nn.api.OptimizationAlgorithm
-import org.deeplearning4j.nn.conf.NeuralNetConfiguration
-import org.deeplearning4j.nn.conf.Updater
-import org.deeplearning4j.nn.conf.layers.{ DenseLayer, OutputLayer }
+import org.deeplearning4j.nn.conf.layers.{DenseLayer, OutputLayer}
+import org.deeplearning4j.nn.conf.{NeuralNetConfiguration, Updater}
 import org.deeplearning4j.nn.multilayer.MultiLayerNetwork
 import org.deeplearning4j.nn.weights.WeightInit
 import org.deeplearning4j.optimize.api.IterationListener
@@ -13,10 +17,7 @@ import org.nd4j.linalg.api.ndarray.INDArray
 import org.nd4j.linalg.dataset.DataSet
 import org.nd4j.linalg.factory.Nd4j
 import org.nd4j.linalg.lossfunctions.LossFunctions
-import javax.swing._
-import java.awt._
-import java.awt.image.BufferedImage
-import java.util._
+
 import scala.collection.JavaConverters._
 import scala.collection.mutable
 

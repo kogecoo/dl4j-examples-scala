@@ -1,15 +1,15 @@
 package org.deeplearning4j.examples.rnn
 
-import java.io.{ File, IOException }
+import java.io.{File, IOException}
 import java.net.URL
 import java.nio.charset.Charset
 import java.util.Random
 
 import org.apache.commons.io.FileUtils
-import org.deeplearning4j.nn.api.{ Layer, OptimizationAlgorithm }
-import org.deeplearning4j.nn.conf.{ MultiLayerConfiguration, NeuralNetConfiguration, Updater }
+import org.deeplearning4j.nn.api.{Layer, OptimizationAlgorithm}
 import org.deeplearning4j.nn.conf.distribution.UniformDistribution
-import org.deeplearning4j.nn.conf.layers.{ GravesLSTM, RnnOutputLayer }
+import org.deeplearning4j.nn.conf.layers.{GravesLSTM, RnnOutputLayer}
+import org.deeplearning4j.nn.conf.{MultiLayerConfiguration, NeuralNetConfiguration, Updater}
 import org.deeplearning4j.nn.multilayer.MultiLayerNetwork
 import org.deeplearning4j.nn.weights.WeightInit
 import org.deeplearning4j.optimize.listeners.ScoreIterationListener

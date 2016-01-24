@@ -1,27 +1,27 @@
 package org.deeplearning4j.examples.deepbelief
 
+import java.io._
+import java.nio.file.{Files, Paths}
+import java.util.Random
+
 import org.apache.commons.io.FileUtils
 import org.deeplearning4j.datasets.iterator.DataSetIterator
 import org.deeplearning4j.datasets.iterator.impl.IrisDataSetIterator
 import org.deeplearning4j.eval.Evaluation
 import org.deeplearning4j.nn.api.OptimizationAlgorithm
-import org.deeplearning4j.nn.conf.{ MultiLayerConfiguration, NeuralNetConfiguration, Updater }
-import org.deeplearning4j.nn.conf.layers.{ OutputLayer, RBM }
+import org.deeplearning4j.nn.conf.layers.{OutputLayer, RBM}
+import org.deeplearning4j.nn.conf.{MultiLayerConfiguration, NeuralNetConfiguration, Updater}
 import org.deeplearning4j.nn.multilayer.MultiLayerNetwork
 import org.deeplearning4j.nn.params.DefaultParamInitializer
 import org.deeplearning4j.nn.weights.WeightInit
 import org.deeplearning4j.optimize.api.IterationListener
 import org.deeplearning4j.optimize.listeners.ScoreIterationListener
 import org.nd4j.linalg.api.ndarray.INDArray
-import org.nd4j.linalg.dataset.{ DataSet, SplitTestAndTrain }
+import org.nd4j.linalg.dataset.{DataSet, SplitTestAndTrain}
 import org.nd4j.linalg.factory.Nd4j
 import org.nd4j.linalg.lossfunctions.LossFunctions
-import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
-import java.io._
-import java.nio.file.{ Files, Paths }
-import java.util.{ Arrays, Random }
 import scala.collection.JavaConverters._
 
 object DBNIrisExample {

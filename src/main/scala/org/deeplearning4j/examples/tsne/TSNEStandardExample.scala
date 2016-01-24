@@ -1,17 +1,16 @@
 package org.deeplearning4j.examples.tsne
 
+import java.io.File
+
 import org.deeplearning4j.berkeley.Pair
 import org.deeplearning4j.models.embeddings.inmemory.InMemoryLookupTable
 import org.deeplearning4j.models.embeddings.loader.WordVectorSerializer
 import org.deeplearning4j.models.word2vec.wordstore.VocabCache
 import org.deeplearning4j.plot.Tsne
 import org.nd4j.linalg.api.ndarray.INDArray
-import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.core.io.ClassPathResource
 
-import java.io.File
-import java.util.{ ArrayList, List }
 import scala.collection.JavaConverters._
 import scala.collection.mutable.ArrayBuilder
 
