@@ -1,6 +1,5 @@
 package org.deeplearning4j.examples.word2vec
 
-import org.deeplearning4j.models.embeddings.WeightLookupTable
 import org.deeplearning4j.models.embeddings.inmemory.InMemoryLookupTable
 import org.deeplearning4j.models.embeddings.loader.WordVectorSerializer
 import org.deeplearning4j.models.word2vec.Word2Vec
@@ -35,17 +34,21 @@ object Word2VecRawTextExample {
 
         log.info("Building model....")
         val vec = new Word2Vec.Builder()
-                .minWordFrequency(5).iterations(1)
-                .layerSize(100).lookupTable(table)
-                .stopWords(new java.util.ArrayList[String]())
-                .vocabCache(cache).seed(42)
-                .windowSize(5).iterate(iter).tokenizerFactory(t).build()
+                .minWordFrequency(5)
+                .iterations(1)
+                .layerSize(100)
+                .seed(42)
+                .windowSize(5)
+                .iterate(iter)
+                .tokenizerFactory(t)
+                .build()
 
         log.info("Fitting Word2Vec model....")
         vec.fit()
 
         log.info("Writing word vectors to text file....")
-        // Write word
+
+        // Write word vectors
         WordVectorSerializer.writeWordVectors(vec, "pathToWriteto.txt")
 
         log.info("Closest Words:")

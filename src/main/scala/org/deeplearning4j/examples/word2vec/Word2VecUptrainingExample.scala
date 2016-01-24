@@ -4,18 +4,12 @@ import org.canova.api.util.ClassPathResource
 import org.deeplearning4j.models.embeddings.WeightLookupTable
 import org.deeplearning4j.models.embeddings.inmemory.InMemoryLookupTable
 import org.deeplearning4j.models.embeddings.loader.WordVectorSerializer
-import org.deeplearning4j.models.word2vec.VocabWord
-import org.deeplearning4j.models.word2vec.Word2Vec
+import org.deeplearning4j.models.word2vec.{VocabWord, Word2Vec}
 import org.deeplearning4j.models.word2vec.wordstore.inmemory.InMemoryLookupCache
-import org.deeplearning4j.text.sentenceiterator.BasicLineIterator
-import org.deeplearning4j.text.sentenceiterator.SentenceIterator
+import org.deeplearning4j.text.sentenceiterator.{BasicLineIterator, SentenceIterator}
 import org.deeplearning4j.text.tokenization.tokenizer.preprocessor.CommonPreprocessor
-import org.deeplearning4j.text.tokenization.tokenizerfactory.DefaultTokenizerFactory
-import org.deeplearning4j.text.tokenization.tokenizerfactory.TokenizerFactory
-import org.slf4j.Logger
+import org.deeplearning4j.text.tokenization.tokenizerfactory.{DefaultTokenizerFactory, TokenizerFactory}
 import org.slf4j.LoggerFactory
-
-import java.util.Collection
 
 /**
  * This is simple example for model weights update after initial vocab building.
@@ -33,7 +27,7 @@ object Word2VecUptrainingExample {
         /*
                 Initial model training phase
          */
-        val filePath = new ClassPathResource("raw_sentences.txt").getFile().getAbsolutePath()
+        val filePath = new ClassPathResource("raw_sentences.txt").getFile.getAbsolutePath
 
         log.info("Load & Vectorize Sentences....")
         // Strip white space before and after for each line
@@ -44,12 +38,7 @@ object Word2VecUptrainingExample {
 
         // manual creation of VocabCache and WeightLookupTable usually isn't necessary
         // but in this case we'll need them
-        val cache = new InMemoryLookupCache()
-        val table: WeightLookupTable[VocabWord] = new InMemoryLookupTable.Builder[VocabWord]()
-                .vectorLength(100)
-                .useAdaGrad(false)
-                .cache(cache)
-                .lr(0.025f).build()
+
 
         log.info("Building model....")
         val vec: Word2Vec = new Word2Vec.Builder()
@@ -61,8 +50,6 @@ object Word2VecUptrainingExample {
                 .windowSize(5)
                 .iterate(iter)
                 .tokenizerFactory(t)
-                .lookupTable(table)
-                .vocabCache(cache)
                 .build()
 
         log.info("Fitting Word2Vec model....")

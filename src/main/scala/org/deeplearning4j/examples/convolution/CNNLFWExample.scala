@@ -2,13 +2,14 @@ package org.deeplearning4j.examples.convolution
 
 import java.util.Random
 
+import org.canova.image.loader.LFWLoader
 import org.deeplearning4j.datasets.iterator.DataSetIterator
 import org.deeplearning4j.datasets.iterator.impl.LFWDataSetIterator
 import org.deeplearning4j.eval.Evaluation
 import org.deeplearning4j.nn.api.OptimizationAlgorithm
 import org.deeplearning4j.nn.conf.layers.setup.ConvolutionLayerSetup
-import org.deeplearning4j.nn.conf.layers.{ConvolutionLayer, OutputLayer, SubsamplingLayer}
-import org.deeplearning4j.nn.conf.{GradientNormalization, MultiLayerConfiguration, NeuralNetConfiguration}
+import org.deeplearning4j.nn.conf.layers.{ConvolutionLayer, DenseLayer, OutputLayer, SubsamplingLayer}
+import org.deeplearning4j.nn.conf.{GradientNormalization, MultiLayerConfiguration, NeuralNetConfiguration, Updater}
 import org.deeplearning4j.nn.multilayer.MultiLayerNetwork
 import org.deeplearning4j.nn.weights.WeightInit
 import org.deeplearning4j.optimize.api.IterationListener
@@ -23,50 +24,90 @@ import scala.collection.mutable
 
 
 /**
- * @author Adam Gibson
+ * Reference: architecture partially based on DeepFace: http://mmlab.ie.cuhk.edu.hk/pdf/YiSun_CVPR14.pdf
+ * Note: this is a sparse dataset with only 1 example for many of the faces; thus, performance is low.
+ * Ideally train on a larger dataset like celebs to get params.
+ *
+ * Currently set to only use the subset images, names starting with A.
+ * Switch to NUM_LABELS & NUM_IMAGES to use full dataset.
  */
+
 object CNNLFWExample {
     lazy val log: Logger = LoggerFactory.getLogger(CNNMnistExample.getClass)
 
     def main(args: Array[String]) = {
-        val numRows = 28
-        val numColumns = 28
-        val nChannels = 1
-        val outputNum = 5749
-        val numSamples = 2000
-        val batchSize = 500
-        val iterations = 10
+        val numRows = 40
+        val numColumns = 40
+        val nChannels = 3
+        val outputNum = LFWLoader.SUB_NUM_LABELS
+        val numSamples = LFWLoader.SUB_NUM_IMAGES - 4
+        val batchSize = numSamples / 10
+        val iterations = 5
         val splitTrainNum = (batchSize*.8).toInt
         val seed = 123
         val listenerFreq = iterations/5
+        val useSubset = true
         val testInputBuilder = mutable.ArrayBuilder.make[INDArray]
         val testLabelsBuilder = mutable.ArrayBuilder.make[INDArray]
 
 
         log.info("Load data.....")
-        val lfw: DataSetIterator = new LFWDataSetIterator(batchSize, numSamples)
+        val lfw: DataSetIterator = new LFWDataSetIterator(batchSize, numSamples, Array[Int](numRows, numColumns, nChannels), outputNum, useSubset, new Random(seed))
 
         log.info("Build model....")
         val builder: MultiLayerConfiguration.Builder = new NeuralNetConfiguration.Builder()
                 .seed(seed)
                 .iterations(iterations)
+                .activation("relu")
+                .weightInit(WeightInit.XAVIER)
                 .gradientNormalization(GradientNormalization.RenormalizeL2PerLayer)
                 .optimizationAlgo(OptimizationAlgorithm.STOCHASTIC_GRADIENT_DESCENT)
-                .list(3)
-                .layer(0, new ConvolutionLayer.Builder(10, 10)
+                .learningRate(0.01)
+                .momentum(0.9)
+                .regularization(true)
+                .updater(Updater.ADAGRAD)
+                .useDropConnect(true)
+                .list(6)
+                .layer(0, new ConvolutionLayer.Builder(4, 4)
+                        .name("cnn1")
                         .nIn(nChannels)
-                        .nOut(6)
-                        .weightInit(WeightInit.XAVIER)
-                        .activation("relu")
+                        .stride(1, 1)
+                        .nOut(20)
                         .build())
                 .layer(1, new SubsamplingLayer.Builder(SubsamplingLayer.PoolingType.MAX, Array[Int](2, 2))
+                        .name("pool1")
                         .build())
-                .layer(2, new OutputLayer.Builder(LossFunctions.LossFunction.NEGATIVELOGLIKELIHOOD)
+                .layer(2, new ConvolutionLayer.Builder(3, 3)
+                        .name("cnn2")
+                        .stride(1,1)
+                        .nOut(40)
+                        .build())
+                .layer(3, new SubsamplingLayer.Builder(SubsamplingLayer.PoolingType.MAX, Array[Int](2, 2))
+                        .name("pool2")
+                        .build())
+                .layer(2, new ConvolutionLayer.Builder(3, 3)
+                        .name("cnn3")
+                        .stride(1,1)
+                        .nOut(60)
+                        .build())
+                .layer(3, new SubsamplingLayer.Builder(SubsamplingLayer.PoolingType.MAX, Array[Int](2, 2))
+                        .name("pool3")
+                        .build())
+                .layer(2, new ConvolutionLayer.Builder(2, 2)
+                        .name("cnn3")
+                        .stride(1,1)
+                        .nOut(80)
+                        .build())
+                .layer(4, new DenseLayer.Builder()
+                        .name("ffn1")
+                        .nOut(160)
+                        .dropOut(0.5)
+                        .build())
+                .layer(5, new OutputLayer.Builder(LossFunctions.LossFunction.NEGATIVELOGLIKELIHOOD)
                         .nOut(outputNum)
-                        .weightInit(WeightInit.XAVIER)
                         .activation("softmax")
                         .build())
-                .backprop(true).pretrain(false)
+                .backprop(true).pretrain(false);
         new ConvolutionLayerSetup(builder, numRows, numColumns, nChannels)
 
         val model = new MultiLayerNetwork(builder.build())
@@ -90,7 +131,7 @@ object CNNLFWExample {
         val testLabels = testLabelsBuilder.result
 
         log.info("Evaluate model....")
-        val eval = new Evaluation(outputNum)
+        val eval = new Evaluation(lfw.getLabels)
         testInput.zip(testLabels).foreach { case (input, label) =>
           val output: INDArray = model.output(input)
           eval.eval(label, output)
