@@ -20,7 +20,7 @@ object TSNEStandardExample {
     lazy val log = LoggerFactory.getLogger(TSNEStandardExample.getClass)
 
     def main(args: Array[String]) = {
-        val iterations = 1000
+        val iterations = 100
         //List<String> cacheList = new ArrayList<>()
         val cacheListBuilder = ArrayBuilder.make[String]
 
