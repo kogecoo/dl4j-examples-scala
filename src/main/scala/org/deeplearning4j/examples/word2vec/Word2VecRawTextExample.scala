@@ -4,9 +4,10 @@ import org.deeplearning4j.models.embeddings.inmemory.InMemoryLookupTable
 import org.deeplearning4j.models.embeddings.loader.WordVectorSerializer
 import org.deeplearning4j.models.word2vec.Word2Vec
 import org.deeplearning4j.models.word2vec.wordstore.inmemory.InMemoryLookupCache
-import org.deeplearning4j.text.sentenceiterator.{SentenceIterator, UimaSentenceIterator}
+import org.deeplearning4j.text.sentenceiterator.{BasicLineIterator, SentenceIterator}
 import org.deeplearning4j.text.tokenization.tokenizer.preprocessor.CommonPreprocessor
 import org.deeplearning4j.text.tokenization.tokenizerfactory.DefaultTokenizerFactory
+import org.deeplearning4j.ui.UiServer
 import org.slf4j.LoggerFactory
 import org.springframework.core.io.ClassPathResource
 
@@ -20,7 +21,7 @@ object Word2VecRawTextExample {
 
         log.info("Load & Vectorize Sentences....")
         // Strip white space before and after for each line
-        val iter: SentenceIterator = UimaSentenceIterator.createWithPath(filePath)
+        val iter: SentenceIterator = new BasicLineIterator(filePath)
         // Split on white spaces in the line to get words
         val t = new DefaultTokenizerFactory()
         t.setTokenPreProcessor(new CommonPreprocessor())
@@ -54,5 +55,8 @@ object Word2VecRawTextExample {
         log.info("Closest Words:")
         val lst: java.util.Collection[String] = vec.wordsNearest("day", 10)
         System.out.println(lst)
+        val server = UiServer.getInstance()
+        System.out.println("Started on port " + server.getPort())
+
     }
 }

@@ -8,7 +8,7 @@ import org.apache.commons.io.FileUtils
 import org.deeplearning4j.datasets.iterator.DataSetIterator
 import org.deeplearning4j.datasets.iterator.impl.IrisDataSetIterator
 import org.deeplearning4j.eval.Evaluation
-import org.deeplearning4j.nn.api.OptimizationAlgorithm
+import org.deeplearning4j.nn.api.{Layer, OptimizationAlgorithm}
 import org.deeplearning4j.nn.conf.layers.{OutputLayer, RBM}
 import org.deeplearning4j.nn.conf.{MultiLayerConfiguration, NeuralNetConfiguration, Updater}
 import org.deeplearning4j.nn.multilayer.MultiLayerNetwork
@@ -83,9 +83,6 @@ object DBNIrisExample {
             .build()
         val model = new MultiLayerNetwork(conf)
         model.init()
-//        model.setListeners(Arrays.asList(new ScoreIterationListener(listenerFreq),
-//                new GradientPlotterIterationListener(listenerFreq),
-//                new LossPlotterIterationListener(listenerFreq)))
 
 
         model.setListeners(Seq[IterationListener](new ScoreIterationListener(listenerFreq)).asJava)
@@ -100,16 +97,18 @@ object DBNIrisExample {
 
         log.info("Evaluate model....")
         val eval = new Evaluation(outputNum)
-        val output = model.output(test.getFeatureMatrix)
+        (0 until 2).foreach { j =>
+            val output = model.output(test.getFeatureMatrix, Layer.TrainingMode.TEST)
 
-        (0 until output.rows()).foreach { i =>
-            val actual = train.getLabels.getRow(i).toString.trim()
-            val predicted = output.getRow(i).toString.trim()
-            log.info("actual " + actual + " vs predicted " + predicted)
+            (0 until output.rows()).foreach { i =>
+                val actual = train.getLabels.getRow(i).toString.trim()
+                val predicted = output.getRow(i).toString.trim()
+                log.info("actual " + actual + " vs predicted " + predicted)
+            }
+
+            eval.eval(test.getLabels, output)
+            log.info(eval.stats())
         }
-
-        eval.eval(test.getLabels, output)
-        log.info(eval.stats())
         log.info("****************Example finished********************")
 
         val fos: OutputStream = Files.newOutputStream(Paths.get("coefficients.bin"))

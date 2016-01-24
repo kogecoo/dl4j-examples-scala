@@ -3,8 +3,10 @@ package org.deeplearning4j.examples.tsne
 import java.io.File
 
 import org.deeplearning4j.models.embeddings.loader.WordVectorSerializer
-import org.deeplearning4j.plot.Tsne
+import org.deeplearning4j.plot.BarnesHutTsne
+import org.nd4j.linalg.api.buffer.DataBuffer
 import org.nd4j.linalg.api.ndarray.INDArray
+import org.nd4j.linalg.factory.Nd4j
 import org.slf4j.LoggerFactory
 import org.springframework.core.io.ClassPathResource
 
@@ -17,7 +19,8 @@ object TSNEStandardExample {
 
     def main(args: Array[String]) = {
         val iterations = 100
-        //List<String> cacheList = new ArrayList<>()
+        Nd4j.dtype = DataBuffer.Type.DOUBLE
+        Nd4j.factory().setDType(DataBuffer.Type.DOUBLE)
         val cacheListBuilder = mutable.ArrayBuilder.make[String]
 
 
@@ -31,8 +34,8 @@ object TSNEStandardExample {
         val cacheList = cacheListBuilder.result.toList.asJava
 
         log.info("Build model....")
-        val tsne = new Tsne.Builder()
-                .setMaxIter(iterations)
+        val tsne: BarnesHutTsne = new BarnesHutTsne.Builder()
+                .setMaxIter(iterations).theta(0.5)
                 .normalize(false)
                 .learningRate(500)
                 .useAdaGrad(false)
