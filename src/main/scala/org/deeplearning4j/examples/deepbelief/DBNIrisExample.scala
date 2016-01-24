@@ -50,8 +50,8 @@ object DBNIrisExample {
 
         log.info("Split data....")
         val testAndTrain: SplitTestAndTrain = next.splitTestAndTrain(splitTrainNum, new Random(seed))
-        val train: DataSet = testAndTrain.getTrain()
-        val test: DataSet = testAndTrain.getTest()
+        val train: DataSet = testAndTrain.getTrain
+        val test: DataSet = testAndTrain.getTest
         Nd4j.ENFORCE_NUMERICAL_STABILITY = true
 
         log.info("Build model....")
@@ -100,15 +100,15 @@ object DBNIrisExample {
 
         log.info("Evaluate model....")
         val eval = new Evaluation(outputNum)
-        val output = model.output(test.getFeatureMatrix())
+        val output = model.output(test.getFeatureMatrix)
 
         (0 until output.rows()).foreach { i =>
-            val actual = train.getLabels().getRow(i).toString().trim()
-            val predicted = output.getRow(i).toString().trim()
+            val actual = train.getLabels.getRow(i).toString.trim()
+            val predicted = output.getRow(i).toString.trim()
             log.info("actual " + actual + " vs predicted " + predicted)
         }
 
-        eval.eval(test.getLabels(), output)
+        eval.eval(test.getLabels, output)
         log.info(eval.stats())
         log.info("****************Example finished********************")
 
@@ -117,7 +117,7 @@ object DBNIrisExample {
         Nd4j.write(model.params(), dos)
         dos.flush()
         dos.close()
-        FileUtils.writeStringToFile(new File("conf.json"), model.getLayerWiseConfigurations().toJson())
+        FileUtils.writeStringToFile(new File("conf.json"), model.getLayerWiseConfigurations.toJson)
 
         val confFromJson = MultiLayerConfiguration.fromJson(FileUtils.readFileToString(new File("conf.json")))
         val dis = new DataInputStream(new FileInputStream("coefficients.bin"))

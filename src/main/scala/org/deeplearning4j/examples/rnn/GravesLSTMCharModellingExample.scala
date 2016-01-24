@@ -52,7 +52,7 @@ object GravesLSTMCharModellingExample {
     val numEpochs = 30              //Total number of training + sample generation epochs
     val nSamplesToGenerate = 4          //Number of samples to generate after each training epoch
     val nCharactersToSample = 300        //Length of each sample to generate
-    var generationInitialization: String = null    //Optional character initialization; a random character is used if null
+    val generationInitialization: String = null    //Optional character initialization; a random character is used if null
     // Above is Used to 'prime' the LSTM with a character sequence to continue/complete.
     // Initialization characters must all be in CharacterIterator.getMinimalCharacterSet() by default
     val rng = new Random(12345)
@@ -91,7 +91,7 @@ object GravesLSTMCharModellingExample {
     net.setListeners(new ScoreIterationListener(1))
 
     //Print the  number of parameters in the network (and for each layer)
-    val layers: Array[Layer] = net.getLayers()
+    val layers: Array[Layer] = net.getLayers
     val totalNumParams = layers.zipWithIndex.map({ case (layer, i) =>
       val nParams: Int = layer.numParams()
       println("Number of parameters in layer " + i + ": " + nParams)
@@ -108,7 +108,7 @@ object GravesLSTMCharModellingExample {
       val submsg = if (generationInitialization == null) "" else generationInitialization
       println("Sampling characters from network given initialization \""+ submsg +"\"")
       val samples: Array[String] = sampleCharactersFromNetwork(generationInitialization, net, iter, rng, nCharactersToSample, nSamplesToGenerate)
-      (0 until samples.length).foreach { j =>
+      samples.indices.foreach { j =>
         println("----- Sample " + j + " -----")
         println(samples(j))
         println()
@@ -136,15 +136,15 @@ object GravesLSTMCharModellingExample {
     val f = new File(fileLocation)
     if( !f.exists() ){
       FileUtils.copyURLToFile(new URL(url), f)
-      println("File downloaded to " + f.getAbsolutePath())
+      println("File downloaded to " + f.getAbsolutePath)
     } else {
-      println("Using existing text file at " + f.getAbsolutePath())
+      println("Using existing text file at " + f.getAbsolutePath)
     }
 
     if (!f.exists()) throw new IOException("File does not exist: " + fileLocation)  //Download problem?
 
-    val validCharacters: Array[Char] = CharacterIterator.getMinimalCharacterSet()  //Which characters are allowed? Others will be removed
-    return new CharacterIterator(fileLocation, Charset.forName("UTF-8"),
+    val validCharacters: Array[Char] = CharacterIterator.getMinimalCharacterSet  //Which characters are allowed? Others will be removed
+    new CharacterIterator(fileLocation, Charset.forName("UTF-8"),
         miniBatchSize, exampleLength, examplesPerEpoch, validCharacters, new Random(12345), true)
   }
 
@@ -159,15 +159,15 @@ object GravesLSTMCharModellingExample {
   private def sampleCharactersFromNetwork(initialization: String, net: MultiLayerNetwork, iter: CharacterIterator, rng: Random, charactersToSample: Int, numSamples: Int): Array[String] = {
     //Set up initialization. If no initialization: use a random character
     val initStr: String = if (initialization == null) {
-      String.valueOf(iter.getRandomCharacter())
+      String.valueOf(iter.getRandomCharacter)
     } else {
       initialization
     }
 
     //Create input for initialization
     val initializationInput: INDArray = Nd4j.zeros(numSamples, iter.inputColumns(), initStr.length())
-    val init: Array[Char] = initStr.toCharArray()
-    (0 until init.length).foreach { i =>
+    val init: Array[Char] = initStr.toCharArray
+    init.indices.foreach { i =>
       val idx = iter.convertCharacterToIndex(initStr(i))
       (0 until numSamples).foreach { j =>
         initializationInput.putScalar(Array[Int](j, idx, i), 1.0f)
@@ -195,7 +195,7 @@ object GravesLSTMCharModellingExample {
       }
       output = net.rnnTimeStep(nextInput)  //Do one time step of forward pass
     }
-    return sb.map(_.toString)
+    sb.map(_.toString)
   }
 
   /** Given a probability distribution over discrete classes, sample from the distribution
@@ -209,7 +209,7 @@ object GravesLSTMCharModellingExample {
 
     if (exceeds.length <= 0) {
       //Should never happen if distribution is a valid probability distribution
-      throw new IllegalArgumentException(s"Distribution is invalid? d=${d}, accum=${accum}")
+      throw new IllegalArgumentException(s"Distribution is invalid? d=$d, accum=$accum")
     }
 
     exceeds.head._2

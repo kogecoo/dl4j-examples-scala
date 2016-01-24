@@ -56,9 +56,9 @@ object DeepAutoEncoderExample {
         model.setListeners(Seq[IterationListener](new ScoreIterationListener(listenerFreq)).asJava)
 
         log.info("Train model....")
-        while(iter.hasNext()) {
+        while(iter.hasNext) {
             val next: DataSet = iter.next()
-            model.fit(new DataSet(next.getFeatureMatrix(),next.getFeatureMatrix()))
+            model.fit(new DataSet(next.getFeatureMatrix, next.getFeatureMatrix))
         }
 
 

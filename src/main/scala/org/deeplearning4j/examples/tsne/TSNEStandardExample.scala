@@ -2,17 +2,14 @@ package org.deeplearning4j.examples.tsne
 
 import java.io.File
 
-import org.deeplearning4j.berkeley.Pair
-import org.deeplearning4j.models.embeddings.inmemory.InMemoryLookupTable
 import org.deeplearning4j.models.embeddings.loader.WordVectorSerializer
-import org.deeplearning4j.models.word2vec.wordstore.VocabCache
 import org.deeplearning4j.plot.Tsne
 import org.nd4j.linalg.api.ndarray.INDArray
 import org.slf4j.LoggerFactory
 import org.springframework.core.io.ClassPathResource
 
 import scala.collection.JavaConverters._
-import scala.collection.mutable.ArrayBuilder
+import scala.collection.mutable
 
 object TSNEStandardExample {
 
@@ -21,14 +18,14 @@ object TSNEStandardExample {
     def main(args: Array[String]) = {
         val iterations = 100
         //List<String> cacheList = new ArrayList<>()
-        val cacheListBuilder = ArrayBuilder.make[String]
+        val cacheListBuilder = mutable.ArrayBuilder.make[String]
 
 
         log.info("Load & Vectorize data....")
-        val wordFile: File = new ClassPathResource("words.txt").getFile()
+        val wordFile: File = new ClassPathResource("words.txt").getFile
         val vectors  = WordVectorSerializer.loadTxt(wordFile)
-        val cache = vectors.getSecond()
-        val weights: INDArray = vectors.getFirst().getSyn0()
+        val cache = vectors.getSecond
+        val weights: INDArray = vectors.getFirst.getSyn0
 
         (0 until cache.numWords).foreach { i => cacheListBuilder += cache.wordAtIndex(i) }
         val cacheList = cacheListBuilder.result.toList.asJava
@@ -44,7 +41,7 @@ object TSNEStandardExample {
 
         log.info("Store TSNE Coordinates for Plotting....")
         val outputFile = "target/archive-tmp/tsne-standard-coords.csv"
-        (new File(outputFile)).getParentFile().mkdirs()
+        new File(outputFile).getParentFile.mkdirs()
         tsne.plot(weights,2,cacheList,outputFile)
     }
 

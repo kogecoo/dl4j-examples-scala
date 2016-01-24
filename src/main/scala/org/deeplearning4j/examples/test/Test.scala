@@ -32,7 +32,7 @@ object Test {
         val splitTrainNum = (batchSize * .8).toInt
         val seed = 123
         val listenerFreq = iterations/5
-        Nd4j.getRandom().setSeed(seed)
+        Nd4j.getRandom.setSeed(seed)
         LOGGER.info("Load data....")
         val iter: DataSetIterator = new IrisDataSetIterator(batchSize, numSamples)
         val iris: DataSet = iter.next()
@@ -40,8 +40,8 @@ object Test {
 
         LOGGER.info("Split data....")
         val testAndTrain: SplitTestAndTrain = iris.splitTestAndTrain(splitTrainNum, new Random(seed))
-        val train: DataSet = testAndTrain.getTrain()
-        val test: DataSet = testAndTrain.getTest()
+        val train: DataSet = testAndTrain.getTrain
+        val test: DataSet = testAndTrain.getTest
         Nd4j.ENFORCE_NUMERICAL_STABILITY = true
 
         LOGGER.info("Build model....")

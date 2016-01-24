@@ -81,7 +81,7 @@ object CNNIrisExample {
         model.setListeners(Seq[IterationListener](new ScoreIterationListener(listenerFreq)).asJava)
 
         log.info("Train model....")
-        model.fit(trainTest.getTrain())
+        model.fit(trainTest.getTrain)
 
         log.info("Evaluate weights....")
         model.getLayers.foreach { case (layer: org.deeplearning4j.nn.api.Layer) =>
@@ -91,8 +91,8 @@ object CNNIrisExample {
 
         log.info("Evaluate model....")
         val eval = new Evaluation(outputNum)
-        val output: INDArray = model.output(trainTest.getTest().getFeatureMatrix())
-        eval.eval(trainTest.getTest().getLabels(), output)
+        val output: INDArray = model.output(trainTest.getTest.getFeatureMatrix)
+        eval.eval(trainTest.getTest.getLabels, output)
         log.info(eval.stats())
 
         log.info("****************Example finished********************")

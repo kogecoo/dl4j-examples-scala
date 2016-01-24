@@ -27,7 +27,7 @@ object CSVExample {
 
     def main(args: Array[String]) {
         val recordReader: RecordReader = new CSVRecordReader(0,",")
-        recordReader.initialize(new FileSplit(new ClassPathResource("iris.txt").getFile()))
+        recordReader.initialize(new FileSplit(new ClassPathResource("iris.txt").getFile))
         //reader,label index,number of possible labels
         val iterator: DataSetIterator = new RecordReaderDataSetIterator(recordReader,4,3)
         //get the dataset using the record reader. The datasetiterator handles vectorization
@@ -77,13 +77,13 @@ object CSVExample {
         next.shuffle()
         //split test and train
         val testAndTrain: SplitTestAndTrain = next.splitTestAndTrain(0.6)
-        model.fit(testAndTrain.getTrain())
+        model.fit(testAndTrain.getTrain)
 
         //evaluate the model
         val eval = new Evaluation(3)
-        val test: DataSet = testAndTrain.getTest()
-        val output: INDArray = model.output(test.getFeatureMatrix())
-        eval.eval(test.getLabels(), output)
+        val test: DataSet = testAndTrain.getTest
+        val output: INDArray = model.output(test.getFeatureMatrix)
+        eval.eval(test.getLabels, output)
         log.info(eval.stats())
 
     }

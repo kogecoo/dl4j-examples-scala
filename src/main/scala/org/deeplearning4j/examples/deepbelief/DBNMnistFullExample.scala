@@ -75,10 +75,10 @@ object DBNMnistFullExample {
         val eval = new Evaluation(outputNum)
 
         val testIter = new MnistDataSetIterator(100,10000)
-        while(testIter.hasNext()) {
+        while(testIter.hasNext) {
             val testMnist = testIter.next()
-            val predict2 = model.output(testMnist.getFeatureMatrix())
-            eval.eval(testMnist.getLabels(), predict2)
+            val predict2 = model.output(testMnist.getFeatureMatrix)
+            eval.eval(testMnist.getLabels, predict2)
         }
 
         log.info(eval.stats())

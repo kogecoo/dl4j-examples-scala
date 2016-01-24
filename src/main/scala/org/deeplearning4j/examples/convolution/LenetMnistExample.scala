@@ -89,12 +89,12 @@ object LenetMnistExample {
 
         log.info("Train model....")
         model.setListeners(new ScoreIterationListener(listenerFreq))
-        while(mnistIter.hasNext()) {
+        while(mnistIter.hasNext) {
             val mnist = mnistIter.next()
             val trainTest = mnist.splitTestAndTrain(splitTrainNum, new Random(seed)); // train set that is the result
-            val trainInput = trainTest.getTrain(); // get feature matrix and labels for training
-            testInputBuilder += trainTest.getTest().getFeatureMatrix()
-            testLabelsBuilder += trainTest.getTest().getLabels()
+            val trainInput = trainTest.getTrain; // get feature matrix and labels for training
+            testInputBuilder += trainTest.getTest.getFeatureMatrix
+            testLabelsBuilder += trainTest.getTest.getLabels
 
             model.fit(trainInput)
         }

@@ -18,6 +18,7 @@ import org.slf4j.LoggerFactory
 
 import scala.collection.JavaConverters._
 
+
 object RBMIrisExample {
 
     val log = LoggerFactory.getLogger(RBMIrisExample.getClass)
@@ -62,7 +63,7 @@ object RBMIrisExample {
                 .optimizationAlgo(OptimizationAlgorithm.STOCHASTIC_GRADIENT_DESCENT)
                         // ^^ Calculates gradients
                 .build()
-        val model: Layer = LayerFactories.getFactory(conf.getLayer()).create(conf)
+        val model: Layer = LayerFactories.getFactory(conf.getLayer).create(conf)
         model.setListeners(Seq[IterationListener](new ScoreIterationListener(listenerFreq)).asJava)
 
         log.info("Evaluate weights....")
@@ -70,7 +71,7 @@ object RBMIrisExample {
         log.info("Weights: " + w)
 
         log.info("Train model....")
-        model.fit(iris.getFeatureMatrix())
+        model.fit(iris.getFeatureMatrix)
 
     }
 

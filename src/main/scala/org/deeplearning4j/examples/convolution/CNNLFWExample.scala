@@ -76,13 +76,13 @@ object CNNLFWExample {
         model.setListeners(Seq[IterationListener](new ScoreIterationListener(listenerFreq)).asJava)
 
 
-        while(lfw.hasNext()) {
+        while(lfw.hasNext) {
             val next: DataSet = lfw.next()
             next.scale()
             val trainTest = next.splitTestAndTrain(splitTrainNum, new Random(seed))  // train set that is the result
-            val trainInput = trainTest.getTrain()  // get feature matrix and labels for training
-            testInputBuilder += trainTest.getTest().getFeatureMatrix()
-            testLabelsBuilder += trainTest.getTest().getLabels()
+            val trainInput = trainTest.getTrain  // get feature matrix and labels for training
+            testInputBuilder += trainTest.getTest.getFeatureMatrix
+            testLabelsBuilder += trainTest.getTest.getLabels
             model.fit(trainInput)
         }
 

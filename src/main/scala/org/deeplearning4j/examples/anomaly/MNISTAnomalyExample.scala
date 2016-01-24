@@ -99,7 +99,7 @@ object MNISTAnomalyExample {
     }
 
     var count = 0
-    (0 until featuresTest.size).foreach { i =>
+    featuresTest.indices.foreach { i =>
       val testData = featuresTest(i)
       val labels   = labelsTest(i)
       val nRows    = testData.rows()

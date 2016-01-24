@@ -76,7 +76,7 @@ object MLPBackpropIrisExample {
         iter.reset()
 
         log.info("Evaluate weights....")
-        model.getLayers().foreach { case (layer: org.deeplearning4j.nn.api.Layer) =>
+        model.getLayers.foreach { case (layer: org.deeplearning4j.nn.api.Layer) =>
           val w: INDArray  = layer.getParam(DefaultParamInitializer.WEIGHT_KEY);
           log.info("Weights: " + w)
         }
@@ -87,8 +87,8 @@ object MLPBackpropIrisExample {
         val iterTest: DataSetIterator = new IrisDataSetIterator(numSamples, numSamples);
         val test: DataSet = iterTest.next()
         test.normalizeZeroMeanZeroUnitVariance()
-        val output: INDArray = model.output(test.getFeatureMatrix())
-        eval.eval(test.getLabels(), output)
+        val output: INDArray = model.output(test.getFeatureMatrix)
+        eval.eval(test.getLabels, output)
         log.info(eval.stats())
         log.info("****************Example finished********************")
     }

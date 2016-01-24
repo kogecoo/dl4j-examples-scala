@@ -3,7 +3,7 @@ package org.deeplearning4j.examples.rnn
 import java.io.{File, IOException}
 import java.nio.charset.Charset
 import java.nio.file.Files
-import java.util.{HashMap, Map, NoSuchElementException, Random}
+import java.util.{NoSuchElementException, Random}
 
 import org.deeplearning4j.datasets.iterator.DataSetIterator
 import org.nd4j.linalg.api.ndarray.INDArray
@@ -20,7 +20,8 @@ import scala.collection.JavaConverters._
  * (optionally) scanning backwards to a new line (to ensure we don't start half way through a word
  * for example).<br>
  * Feature vectors and labels are both one-hot vectors of same length
- * @author Alex Black
+  *
+  * @author Alex Black
  */
 
 
@@ -40,7 +41,7 @@ class CharacterIterator(textFilePath: String, textFileEncoding: Charset, miniBat
 
   val serialVersionUID: Long = -7287833919126626356L
   val MAX_SCAN_LENGTH: Int = 200
-  val charToIdxMap: Map[Character, Integer] = new HashMap()
+  val charToIdxMap: java.util.Map[Character, Integer] = new java.util.HashMap()
   var fileCharacters: Array[Char] = Array[Char]()
   var examplesSoFar = 0
   val numCharacters: Int = validCharacters.length
@@ -49,12 +50,12 @@ class CharacterIterator(textFilePath: String, textFileEncoding: Charset, miniBat
   init(textFilePath, textFileEncoding, miniBatchSize, numExamplesToFetch, validCharacters)
 
   def this(path: String, miniBatchSize: Int, exampleSize: Int, numExamplesToFetch: Int) {
-    this(path, Charset.defaultCharset(), miniBatchSize, exampleSize, numExamplesToFetch, CharacterIterator.getDefaultCharacterSet(), new Random(), true)
+    this(path, Charset.defaultCharset(), miniBatchSize, exampleSize, numExamplesToFetch, CharacterIterator.getDefaultCharacterSet, new Random(), true)
   }
 
   private[this] def initValidation(textFilePath: String, numExamplesToFetch: Int, miniBatchSize: Int) {
     if ( !new File(textFilePath).exists()) {
-      val msg = s"Could not access file (does not exist): ${textFilePath}"
+      val msg = s"Could not access file (does not exist): $textFilePath"
       throw new IOException(msg)
     }
 
@@ -76,7 +77,7 @@ class CharacterIterator(textFilePath: String, textFileEncoding: Charset, miniBat
 
     //Load file and convert contents to a char[] 
     val newLineValid: Boolean = charToIdxMap.containsKey('\n')
-    val lines = Files.readAllLines(new File(textFilePath).toPath(), textFileEncoding).asScala
+    val lines = Files.readAllLines(new File(textFilePath).toPath, textFileEncoding).asScala
     val maxSize: Int = lines.map(_.length).fold(lines.size)(_ + _ ) //add lines.size() to account for newline characters at end of each line 
     fileCharacters = lines.flatMap({ s =>
       val filtered = s.filter(charToIdxMap.containsKey(_)).toString
@@ -84,7 +85,7 @@ class CharacterIterator(textFilePath: String, textFileEncoding: Charset, miniBat
     }).toArray
 
     if (exampleLength >= fileCharacters.length) {
-      val msg = s"exampleLength=${exampleLength} cannot exceed number of valid characters in file (${fileCharacters.length})"
+      val msg = s"exampleLength=$exampleLength cannot exceed number of valid characters in file (${fileCharacters.length})"
       throw new IllegalArgumentException(msg)
     }
 
@@ -97,9 +98,9 @@ class CharacterIterator(textFilePath: String, textFileEncoding: Charset, miniBat
 
   def convertCharacterToIndex(c: Char): Int = charToIdxMap.get(c)
 
-  def getRandomCharacter(): Char = validCharacters((rng.nextDouble()*validCharacters.length).toInt)
+  def getRandomCharacter: Char = validCharacters((rng.nextDouble()*validCharacters.length).toInt)
 
-  def hasNext(): Boolean = examplesSoFar + miniBatchSize <= numExamplesToFetch
+  def hasNext: Boolean = examplesSoFar + miniBatchSize <= numExamplesToFetch
 
   def next(): DataSet = next(miniBatchSize)
 
@@ -138,7 +139,7 @@ class CharacterIterator(textFilePath: String, textFileEncoding: Charset, miniBat
     }
 
     examplesSoFar += num
-    return new DataSet(input,labels)
+    new DataSet(input,labels)
   }
 
   def totalExamples(): Int = numExamplesToFetch
@@ -164,7 +165,7 @@ class CharacterIterator(textFilePath: String, textFileEncoding: Charset, miniBat
 object CharacterIterator {
 
   /** A minimal character set, with a-z, A-Z, 0-9 and common punctuation etc */
-  def getMinimalCharacterSet(): Array[Char] = {
+  def getMinimalCharacterSet: Array[Char] = {
     (('a' to 'z').toSeq ++
     ('A' to 'Z').toSeq ++
     ('0' to '9').toSeq ++
@@ -172,8 +173,8 @@ object CharacterIterator {
   }
 
   /** As per getMinimalCharacterSet(), but with a few extra characters */
-  def getDefaultCharacterSet(): Array[Char] = {
-    (getMinimalCharacterSet() ++
+  def getDefaultCharacterSet: Array[Char] = {
+    (getMinimalCharacterSet ++
     Seq[Char]('@', '#', '$', '%', '^', '*', '{', '}', '[', ']', '/', '+', '_', '\\', '|', '<', '>')).toArray
   }
 

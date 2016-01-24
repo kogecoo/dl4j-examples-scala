@@ -1,7 +1,7 @@
 package org.deeplearning4j.examples.convolution
 
 import java.io.File
-import java.util.Arrays
+import java.util
 
 import org.deeplearning4j.nn.api.OptimizationAlgorithm
 import org.deeplearning4j.nn.conf.{GradientNormalization, MultiLayerConfiguration, NeuralNetConfiguration}
@@ -18,15 +18,11 @@ object Cifar {
         val dataSet: DataSet = new DataSet()
         // dataSet.load(new File("/home/agibsonccc/Downloads/cifar-train.bin"))
         dataSet.load(new File("cifar-small.bin"))
-        System.out.println(Arrays.toString(dataSet.getFeatureMatrix().shape()))
+        System.out.println(util.Arrays.toString(dataSet.getFeatureMatrix.shape()))
         val nChannels = 3
         val outputNum = 10
-        val numSamples = 2000
-        val batchSize = 500
         val iterations = 10
-        val splitTrainNum = (batchSize*.8).toInt
         val seed = 123
-        val listenerFreq = iterations/5
 
         //setup the network
         val builder: MultiLayerConfiguration.Builder = new NeuralNetConfiguration.Builder()

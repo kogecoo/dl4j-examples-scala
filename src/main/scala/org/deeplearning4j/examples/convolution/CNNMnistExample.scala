@@ -18,7 +18,8 @@ import org.nd4j.linalg.lossfunctions.LossFunctions
 import org.slf4j.LoggerFactory
 
 import scala.collection.JavaConverters._
-import scala.collection.mutable.ArrayBuilder
+import scala.collection.mutable
+
 
 object CNNMnistExample {
 
@@ -36,8 +37,8 @@ object CNNMnistExample {
         val splitTrainNum = (batchSize*.8).toInt
         val seed = 123
         val listenerFreq = iterations/5
-        val testInputBuilder = ArrayBuilder.make[INDArray]
-        val testLabelsBuilder = ArrayBuilder.make[INDArray]
+        val testInputBuilder = mutable.ArrayBuilder.make[INDArray]
+        val testLabelsBuilder = mutable.ArrayBuilder.make[INDArray]
 
         log.info("Load data....")
         val mnistIter: DataSetIterator = new MnistDataSetIterator(batchSize,numSamples, true)
@@ -73,12 +74,12 @@ object CNNMnistExample {
 
         log.info("Train model....")
         model.setListeners(Seq[IterationListener](new ScoreIterationListener(listenerFreq)).asJava)
-        while(mnistIter.hasNext()) {
+        while(mnistIter.hasNext) {
             val mnist = mnistIter.next()
             val trainTest = mnist.splitTestAndTrain(splitTrainNum, new Random(seed)); // train set that is the result
-            val trainInput = trainTest.getTrain(); // get feature matrix and labels for training
-            testInputBuilder += trainTest.getTest().getFeatureMatrix()
-            testLabelsBuilder += trainTest.getTest().getLabels()
+            val trainInput = trainTest.getTrain; // get feature matrix and labels for training
+            testInputBuilder += trainTest.getTest.getFeatureMatrix
+            testLabelsBuilder += trainTest.getTest.getLabels
             model.fit(trainInput)
         }
 

@@ -1,7 +1,5 @@
 package org.deeplearning4j.examples.word2vec
 
-import java.util.{ArrayList, Collection}
-
 import org.deeplearning4j.models.embeddings.WeightLookupTable
 import org.deeplearning4j.models.embeddings.inmemory.InMemoryLookupTable
 import org.deeplearning4j.models.embeddings.loader.WordVectorSerializer
@@ -19,7 +17,7 @@ object Word2VecRawTextExample {
 
     def main(args: Array[String]) = {
 
-        val filePath = new ClassPathResource("raw_sentences.txt").getFile().getAbsolutePath()
+        val filePath = new ClassPathResource("raw_sentences.txt").getFile.getAbsolutePath
 
         log.info("Load & Vectorize Sentences....")
         // Strip white space before and after for each line
@@ -39,7 +37,7 @@ object Word2VecRawTextExample {
         val vec = new Word2Vec.Builder()
                 .minWordFrequency(5).iterations(1)
                 .layerSize(100).lookupTable(table)
-                .stopWords(new ArrayList[String]())
+                .stopWords(new java.util.ArrayList[String]())
                 .vocabCache(cache).seed(42)
                 .windowSize(5).iterate(iter).tokenizerFactory(t).build()
 
@@ -51,7 +49,7 @@ object Word2VecRawTextExample {
         WordVectorSerializer.writeWordVectors(vec, "pathToWriteto.txt")
 
         log.info("Closest Words:")
-        val lst: Collection[String] = vec.wordsNearest("day", 10)
+        val lst: java.util.Collection[String] = vec.wordsNearest("day", 10)
         System.out.println(lst)
     }
 }

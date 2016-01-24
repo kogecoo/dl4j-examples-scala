@@ -22,7 +22,7 @@ object RegressionExample {
         val seed = 123
         val iterations = 100
         val reader: RecordReader = new CSVRecordReader()
-        reader.initialize(new FileSplit(new ClassPathResource("regression-example.txt").getFile()))
+        reader.initialize(new FileSplit(new ClassPathResource("regression-example.txt").getFile))
         val conf: MultiLayerConfiguration = new NeuralNetConfiguration.Builder()
                 .seed(seed) // Seed to lock in weight initialization for tuning
                 .iterations(iterations) // # training iterations predict/classify & backprop
@@ -46,7 +46,7 @@ object RegressionExample {
         val network: MultiLayerNetwork = new MultiLayerNetwork(conf)
         network.init()
         network.setListeners(new ScoreIterationListener(1))
-        network.fit(testAndTrain.getTrain())
+        network.fit(testAndTrain.getTrain)
 
 
 
