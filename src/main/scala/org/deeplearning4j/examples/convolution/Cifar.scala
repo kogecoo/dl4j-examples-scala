@@ -12,7 +12,10 @@ import org.deeplearning4j.nn.weights.WeightInit
 import org.nd4j.linalg.dataset.DataSet
 import org.nd4j.linalg.lossfunctions.LossFunctions
 
-
+/**
+ * Dataset url:
+ * https://s3.amazonaws.com/dl4j-distribution/cifar-small.bin
+ */
 object Cifar {
     def main(args: Array[String]) {
         val dataSet: DataSet = new DataSet()
