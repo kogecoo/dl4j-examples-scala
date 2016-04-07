@@ -61,8 +61,8 @@ object SequenceVectorsTextExample {
         /*
             And we pack that transformer into AbstractSequenceIterator
          */
-        val sequenceIterator: AbstractSequenceIterator[VocabWord]  = new AbstractSequenceIterator.Builder[VocabWord](transformer)
-                .build()
+        val sequenceIterator: AbstractSequenceIterator[VocabWord] =
+            new AbstractSequenceIterator.Builder[VocabWord](transformer).build()
 
 
         /*

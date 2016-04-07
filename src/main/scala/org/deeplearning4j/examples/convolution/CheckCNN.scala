@@ -13,7 +13,7 @@ import org.nd4j.linalg.factory.Nd4j
 import org.nd4j.linalg.lossfunctions.LossFunctions
 import org.nd4j.linalg.util.FeatureUtil
 
-import scala.collection.JavaConverters._
+import java.util.Collections
 
 
 /**
@@ -58,7 +58,7 @@ object CheckCNN {
 
         val model: MultiLayerNetwork = new MultiLayerNetwork(conf)
         model.init()
-        model.setListeners(Seq[IterationListener](new ScoreIterationListener(5)).asJava)
+        model.setListeners(Collections.singletonList[IterationListener](new ScoreIterationListener(5)))
         model.fit(d)
     }
 

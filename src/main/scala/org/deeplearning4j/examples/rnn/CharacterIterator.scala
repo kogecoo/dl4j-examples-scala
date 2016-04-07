@@ -108,8 +108,8 @@ class CharacterIterator(textFilePath: String, textFileEncoding: Charset, miniBat
     if (examplesSoFar+num > numExamplesToFetch) throw new NoSuchElementException()
 
     //Allocate space:
-    val input: INDArray = Nd4j.zeros(Array[Int](num, numCharacters, exampleLength): _*)
-    val labels: INDArray = Nd4j.zeros(Array[Int](num, numCharacters, exampleLength): _*)
+    val input: INDArray = Nd4j.zeros(num, numCharacters, exampleLength)
+    val labels: INDArray = Nd4j.zeros(num, numCharacters, exampleLength)
 
     val maxStartIdx: Int = fileCharacters.length - exampleLength
 

@@ -105,8 +105,7 @@ object GravesLSTMCharModellingExample {
 
       println("--------------------")
       println("Completed epoch " + i )
-      val submsg = if (generationInitialization == null) "" else generationInitialization
-      println("Sampling characters from network given initialization \""+ submsg +"\"")
+      println("Sampling characters from network given initialization \"" + ("") + "\"")
       val samples: Array[String] = sampleCharactersFromNetwork(generationInitialization, net, iter, rng, nCharactersToSample, nSamplesToGenerate)
       samples.indices.foreach { j =>
         println("----- Sample " + j + " -----")

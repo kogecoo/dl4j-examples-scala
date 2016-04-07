@@ -17,7 +17,6 @@ import org.nd4j.linalg.dataset.api.iterator.DataSetIterator
 import org.nd4j.linalg.lossfunctions.LossFunctions
 import org.slf4j.LoggerFactory
 
-import scala.collection.JavaConverters._
 import scala.collection.mutable
 
 
@@ -73,7 +72,7 @@ object CNNMnistExample {
         model.init()
 
         log.info("Train model....")
-        model.setListeners(Seq[IterationListener](new ScoreIterationListener(listenerFreq)).asJava)
+        model.setListeners(Collections.singletonList[IterationListener](new ScoreIterationListener(listenerFreq)))
         while(mnistIter.hasNext) {
             val mnist = mnistIter.next()
             val trainTest = mnist.splitTestAndTrain(splitTrainNum, new Random(seed)); // train set that is the result

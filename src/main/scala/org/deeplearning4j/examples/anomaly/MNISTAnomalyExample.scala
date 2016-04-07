@@ -18,7 +18,6 @@ import org.nd4j.linalg.dataset.DataSet
 import org.nd4j.linalg.factory.Nd4j
 import org.nd4j.linalg.lossfunctions.LossFunctions
 
-import scala.collection.JavaConverters._
 import scala.collection.mutable
 
 
@@ -56,7 +55,7 @@ object MNISTAnomalyExample {
       .build()
 
     val net = new MultiLayerNetwork(conf)
-    net.setListeners(Seq[IterationListener](new ScoreIterationListener(1)).asJava)
+    net.setListeners(Collections.singletonList[IterationListener](new ScoreIterationListener(1)))
 
     //Load data and split into training and testing sets. 40000 train, 10000 test
     val iter = new MnistDataSetIterator(100,50000,false)

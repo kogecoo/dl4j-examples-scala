@@ -75,7 +75,7 @@ object DBNMnistFullExample {
 
         val model: MultiLayerNetwork = new MultiLayerNetwork(conf)
         model.init()
-        model.setListeners(new ScoreIterationListener(listenerFreq).asInstanceOf[IterationListener])
+        model.setListeners(Collections.singletonList(new ScoreIterationListener(listenerFreq).asInstanceOf[IterationListener]))
 
         log.info("Train model....")
         model.fit(iter); // achieves end to end pre-training

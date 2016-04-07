@@ -141,14 +141,13 @@ object VideoClassificationExample {
         }
 
         val testStartIdx = (0.9 * N_VIDEOS_TO_GENERATE).asInstanceOf[Int]  //90% in train, 10% in test
-        val nTrain = testStartIdx
-        val nTest = N_VIDEOS_TO_GENERATE - nTrain
+        val nTest = N_VIDEOS_TO_GENERATE - testStartIdx
 
         //Conduct learning
         System.out.println("Starting training...")
         val nTrainEpochs = 15
         (0 until nTrainEpochs).foreach { i =>
-            val trainData: DataSetIterator = getDataSetIterator(dataDirectory, 0, nTrain - 1, miniBatchSize)
+            val trainData: DataSetIterator = getDataSetIterator(dataDirectory, 0, testStartIdx - 1, miniBatchSize)
             while(trainData.hasNext)
                 net.fit(trainData.next())
             Nd4j.saveBinary(net.params(),new File("videomodel.bin"))

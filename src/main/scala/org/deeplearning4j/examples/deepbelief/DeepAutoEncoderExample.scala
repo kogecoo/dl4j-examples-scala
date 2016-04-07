@@ -13,7 +13,8 @@ import org.nd4j.linalg.dataset.api.iterator.DataSetIterator
 import org.nd4j.linalg.lossfunctions.LossFunctions
 import org.slf4j.LoggerFactory
 
-import scala.collection.JavaConverters._
+import java.util.Collections
+
 
 object DeepAutoEncoderExample {
 
@@ -53,7 +54,7 @@ object DeepAutoEncoderExample {
         val model = new MultiLayerNetwork(conf)
         model.init()
 
-        model.setListeners(Seq[IterationListener](new ScoreIterationListener(listenerFreq)).asJava)
+        model.setListeners(Collections.singletonList[IterationListener](new ScoreIterationListener(listenerFreq)))
 
         log.info("Train model....")
         while(iter.hasNext) {

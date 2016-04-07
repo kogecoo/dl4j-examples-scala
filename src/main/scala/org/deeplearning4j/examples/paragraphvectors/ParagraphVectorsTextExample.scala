@@ -29,7 +29,7 @@ object ParagraphVectorsTextExample {
         val file = resource.getFile
         val iter: SentenceIterator  = new BasicLineIterator(file)
 
-        val cache: InMemoryLookupCache = new InMemoryLookupCache(false)
+        val cache: InMemoryLookupCache = new InMemoryLookupCache()
 
         val t: TokenizerFactory  = new DefaultTokenizerFactory()
         t.setTokenPreProcessor(new CommonPreprocessor())

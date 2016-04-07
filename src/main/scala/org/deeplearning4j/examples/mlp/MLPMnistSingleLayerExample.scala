@@ -17,7 +17,6 @@ import org.nd4j.linalg.factory.Nd4j
 import org.nd4j.linalg.lossfunctions.LossFunctions.LossFunction
 import org.slf4j.LoggerFactory
 
-import scala.collection.JavaConverters._
 import scala.collection.mutable
 
 
@@ -69,10 +68,10 @@ object MLPMnistSingleLayerExample {
 
         val model = new MultiLayerNetwork(conf)
         model.init()
-        model.setListeners(Seq[IterationListener](new ScoreIterationListener(listenerFreq)).asJava)
+        model.setListeners(Collections.singletonList[IterationListener](new ScoreIterationListener(listenerFreq)))
 
         log.info("Train model....")
-        model.setListeners(Seq[IterationListener](new ScoreIterationListener(listenerFreq)).asJava)
+        model.setListeners(Collections.singletonList[IterationListener](new ScoreIterationListener(listenerFreq)))
         while(mnistIter.hasNext) {
             val mnist = mnistIter.next()
             val trainTest = mnist.splitTestAndTrain(splitTrainNum, new Random(seed))

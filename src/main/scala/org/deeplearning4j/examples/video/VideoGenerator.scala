@@ -107,8 +107,8 @@ object VideoGenerator {
             (0 until numDistractorsPerFrame).foreach { _ =>
                 val distractorShapeIdx = r.nextInt(NUM_SHAPES)
 
-                val distractorX = DISTRACTOR_MIN_DIST_FROM_EDGE + r.nextInt(width - SHAPE_SIZE - 2*DISTRACTOR_MIN_DIST_FROM_EDGE )
-                val distractorY = DISTRACTOR_MIN_DIST_FROM_EDGE + r.nextInt(height - SHAPE_SIZE - 2*DISTRACTOR_MIN_DIST_FROM_EDGE )
+                val distractorX = DISTRACTOR_MIN_DIST_FROM_EDGE + r.nextInt(width - SHAPE_SIZE)
+                val distractorY = DISTRACTOR_MIN_DIST_FROM_EDGE + r.nextInt(height - SHAPE_SIZE)
 
                 g2d.setColor(new Color(r.nextFloat(), r.nextFloat(), r.nextFloat()))
 
