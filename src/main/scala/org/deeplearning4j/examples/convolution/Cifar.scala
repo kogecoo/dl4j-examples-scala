@@ -24,12 +24,8 @@ object Cifar {
         System.out.println(util.Arrays.toString(dataSet.getFeatureMatrix.shape()))
         val nChannels = 3
         val outputNum = 10
-        val numSamples = 2000
-        val batchSize = 500
         val iterations = 10
-        val splitTrainNum = (batchSize*.8).toInt
         val seed = 123
-        val listenerFreq = iterations/5
 
         //setup the network
         val builder: MultiLayerConfiguration.Builder = new NeuralNetConfiguration.Builder()

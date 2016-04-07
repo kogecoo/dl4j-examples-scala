@@ -41,7 +41,6 @@ object Test {
         LOGGER.info("Split data....")
         val testAndTrain: SplitTestAndTrain = iris.splitTestAndTrain(splitTrainNum, new Random(seed))
         val train: DataSet = testAndTrain.getTrain
-        val test: DataSet = testAndTrain.getTest
         Nd4j.ENFORCE_NUMERICAL_STABILITY = true
 
         LOGGER.info("Build model....")

@@ -109,10 +109,5 @@ object EarlyStoppingMNIST {
         list.foreach { i =>
             System.out.println(i + "\t" + scoreVsEpoch.get(i))
         }
-
-        //Get the best model
-        val bestModel: MultiLayerNetwork = result.getBestModel()
-
     }
-
 }

@@ -32,8 +32,6 @@ object CNNIrisExample {
         val numColumns = 2
         val nChannels = 1
         val outputNum = 3
-        val numSamples = 150
-        val batchSize = 150
         val iterations = 10
         val splitTrainNum = 100
         val seed = 123
@@ -44,7 +42,7 @@ object CNNIrisExample {
          *Set a neural network configuration with multiple layers
          */
         log.info("Load data....")
-        val irisIter: DataSetIterator = new IrisDataSetIterator(batchSize, numSamples)
+        val irisIter: DataSetIterator = new IrisDataSetIterator(150, 150)
         val iris: DataSet = irisIter.next()
         iris.normalizeZeroMeanZeroUnitVariance()
         System.out.println("Loaded " + iris.labelCounts)
