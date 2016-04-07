@@ -14,7 +14,7 @@ import org.nd4j.linalg.lossfunctions.LossFunctions
 
 /**
  * Dataset url:
- * https://s3.amazonaws.com/dl4j-distribution/cifar-small.bin
+ * https://s3.amazonaws.com/dl4j-distribution/cifar-train.bin
  */
 object Cifar {
     def main(args: Array[String]) {
