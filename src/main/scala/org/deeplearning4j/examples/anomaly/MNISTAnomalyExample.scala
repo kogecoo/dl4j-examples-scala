@@ -1,4 +1,4 @@
-package org.deeplearning4j.examples.anomaly
+package org.deeplearning4j.examples.feedforward.anomalydetection
 
 import java.awt._
 import java.awt.image.BufferedImage
@@ -32,7 +32,7 @@ object MNISTAnomalyExample {
       .iterations(1)
       .optimizationAlgo(OptimizationAlgorithm.STOCHASTIC_GRADIENT_DESCENT)
       .learningRate(0.05)
-      .l2(0.001)
+      .regularization(true).l2(0.001)
       .list(4)
       .layer(0, new DenseLayer.Builder().nIn(784).nOut(250)
         .weightInit(WeightInit.XAVIER)
