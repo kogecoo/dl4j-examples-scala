@@ -1,30 +1,22 @@
 package org.deeplearning4j.examples.misc.earlystopping
 
+import java.util.concurrent.TimeUnit
+
 import org.apache.commons.io.FilenameUtils
 import org.deeplearning4j.datasets.iterator.DataSetIterator
 import org.deeplearning4j.datasets.iterator.impl.MnistDataSetIterator
-import org.deeplearning4j.earlystopping.EarlyStoppingConfiguration
-import org.deeplearning4j.earlystopping.EarlyStoppingModelSaver
-import org.deeplearning4j.earlystopping.EarlyStoppingResult
+import org.deeplearning4j.earlystopping.{EarlyStoppingConfiguration, EarlyStoppingModelSaver, EarlyStoppingResult}
 import org.deeplearning4j.earlystopping.saver.LocalFileModelSaver
 import org.deeplearning4j.earlystopping.scorecalc.DataSetLossCalculator
-import org.deeplearning4j.earlystopping.termination.MaxEpochsTerminationCondition
-import org.deeplearning4j.earlystopping.termination.MaxTimeIterationTerminationCondition
+import org.deeplearning4j.earlystopping.termination.{MaxEpochsTerminationCondition, MaxTimeIterationTerminationCondition}
 import org.deeplearning4j.earlystopping.trainer.EarlyStoppingTrainer
 import org.deeplearning4j.nn.api.OptimizationAlgorithm
-import org.deeplearning4j.nn.conf.MultiLayerConfiguration
-import org.deeplearning4j.nn.conf.NeuralNetConfiguration
-import org.deeplearning4j.nn.conf.Updater
-import org.deeplearning4j.nn.conf.layers.ConvolutionLayer
-import org.deeplearning4j.nn.conf.layers.DenseLayer
-import org.deeplearning4j.nn.conf.layers.OutputLayer
-import org.deeplearning4j.nn.conf.layers.SubsamplingLayer
+import org.deeplearning4j.nn.conf.{MultiLayerConfiguration, NeuralNetConfiguration, Updater}
+import org.deeplearning4j.nn.conf.layers.{ConvolutionLayer, DenseLayer, OutputLayer, SubsamplingLayer}
 import org.deeplearning4j.nn.conf.layers.setup.ConvolutionLayerSetup
-import org.deeplearning4j.nn.multilayer.MultiLayerNetwork
 import org.deeplearning4j.nn.weights.WeightInit
 import org.nd4j.linalg.lossfunctions.LossFunctions
 
-import java.util.concurrent.TimeUnit
 import scala.collection.JavaConverters._
 
 /**Early stopping example on a subset of MNIST

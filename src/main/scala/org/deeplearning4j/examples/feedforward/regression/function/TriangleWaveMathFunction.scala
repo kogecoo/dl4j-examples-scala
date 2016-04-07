@@ -3,6 +3,7 @@ package org.deeplearning4j.examples.feedforward.regression.function
 import org.nd4j.linalg.api.ndarray.INDArray
 import org.nd4j.linalg.factory.Nd4j
 
+
 class TriangleWaveMathFunction extends MathFunction {
 
     override def getFunctionValues(x: INDArray): INDArray = {

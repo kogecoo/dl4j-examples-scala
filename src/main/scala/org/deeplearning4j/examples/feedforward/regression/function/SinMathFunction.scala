@@ -4,6 +4,7 @@ import org.nd4j.linalg.api.ndarray.INDArray
 import org.nd4j.linalg.api.ops.impl.transforms.Sin
 import org.nd4j.linalg.factory.Nd4j
 
+
 class SinMathFunction extends MathFunction {
 
     override def getFunctionValues(x: INDArray): INDArray = {

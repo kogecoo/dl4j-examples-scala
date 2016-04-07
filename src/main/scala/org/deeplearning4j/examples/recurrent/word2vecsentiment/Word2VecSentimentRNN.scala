@@ -10,8 +10,8 @@ import org.deeplearning4j.datasets.iterator.{AsyncDataSetIterator, DataSetIterat
 import org.deeplearning4j.eval.Evaluation
 import org.deeplearning4j.models.embeddings.loader.WordVectorSerializer
 import org.deeplearning4j.nn.api.OptimizationAlgorithm
-import org.deeplearning4j.nn.conf.{GradientNormalization, NeuralNetConfiguration, Updater}
 import org.deeplearning4j.nn.conf.layers.{GravesLSTM, RnnOutputLayer}
+import org.deeplearning4j.nn.conf.{GradientNormalization, NeuralNetConfiguration, Updater}
 import org.deeplearning4j.nn.multilayer.MultiLayerNetwork
 import org.deeplearning4j.nn.weights.WeightInit
 import org.deeplearning4j.optimize.listeners.ScoreIterationListener

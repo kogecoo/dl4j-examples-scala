@@ -13,6 +13,7 @@ import org.springframework.core.io.ClassPathResource
 import scala.collection.JavaConverters._
 import scala.collection.mutable
 
+
 object TSNEStandardExample {
 
     lazy val log = LoggerFactory.getLogger(TSNEStandardExample.getClass)

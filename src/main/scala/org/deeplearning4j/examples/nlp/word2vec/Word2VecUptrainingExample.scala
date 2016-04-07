@@ -3,12 +3,13 @@ package org.deeplearning4j.examples.nlp.word2vec
 import org.canova.api.util.ClassPathResource
 import org.deeplearning4j.models.embeddings.inmemory.InMemoryLookupTable
 import org.deeplearning4j.models.embeddings.loader.WordVectorSerializer
-import org.deeplearning4j.models.word2vec.{VocabWord, Word2Vec}
 import org.deeplearning4j.models.word2vec.wordstore.inmemory.InMemoryLookupCache
+import org.deeplearning4j.models.word2vec.{VocabWord, Word2Vec}
 import org.deeplearning4j.text.sentenceiterator.{BasicLineIterator, SentenceIterator}
 import org.deeplearning4j.text.tokenization.tokenizer.preprocessor.CommonPreprocessor
 import org.deeplearning4j.text.tokenization.tokenizerfactory.{DefaultTokenizerFactory, TokenizerFactory}
 import org.slf4j.LoggerFactory
+
 
 /**
  * This is simple example for model weights update after initial vocab building.

@@ -1,5 +1,7 @@
 package org.deeplearning4j.examples.unsupervised.deepbelief
 
+import java.util.Collections
+
 import org.deeplearning4j.datasets.fetchers.MnistDataFetcher
 import org.deeplearning4j.datasets.iterator.impl.MnistDataSetIterator
 import org.deeplearning4j.nn.api.OptimizationAlgorithm
@@ -12,8 +14,6 @@ import org.nd4j.linalg.dataset.DataSet
 import org.nd4j.linalg.dataset.api.iterator.DataSetIterator
 import org.nd4j.linalg.lossfunctions.LossFunctions
 import org.slf4j.LoggerFactory
-
-import java.util.Collections
 
 /**
  * ***** NOTE: This example has not been tuned. It requires additional work to produce sensible results *****

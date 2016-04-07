@@ -1,15 +1,14 @@
 package org.deeplearning4j.examples.recurrent.character
 
-import org.deeplearning4j.datasets.iterator.DataSetIterator
-import org.nd4j.linalg.api.ndarray.INDArray
-import org.nd4j.linalg.dataset.DataSet
-import org.nd4j.linalg.dataset.api.DataSetPreProcessor
-import org.nd4j.linalg.factory.Nd4j
-
 import java.io.{File, IOException}
 import java.nio.charset.Charset
 import java.nio.file.Files
 import java.util.{Collections, LinkedList, NoSuchElementException, Random}
+
+import org.deeplearning4j.datasets.iterator.DataSetIterator
+import org.nd4j.linalg.dataset.DataSet
+import org.nd4j.linalg.dataset.api.DataSetPreProcessor
+import org.nd4j.linalg.factory.Nd4j
 
 import scala.collection.JavaConverters._
 

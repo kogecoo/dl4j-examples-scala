@@ -1,35 +1,25 @@
 package org.deeplearning4j.examples.feedforward.regression
 
+import java.util.{Collections, List, Random}
+import javax.swing._
+
 import org.deeplearning4j.datasets.iterator.DataSetIterator
 import org.deeplearning4j.datasets.iterator.impl.ListDataSetIterator
 import org.deeplearning4j.examples.feedforward.regression.function._
 import org.deeplearning4j.nn.api.OptimizationAlgorithm
-import org.deeplearning4j.nn.conf.MultiLayerConfiguration
-import org.deeplearning4j.nn.conf.NeuralNetConfiguration
-import org.deeplearning4j.nn.conf.Updater
+import org.deeplearning4j.nn.conf.{MultiLayerConfiguration, NeuralNetConfiguration, Updater}
 import org.deeplearning4j.nn.conf.distribution.UniformDistribution
-import org.deeplearning4j.nn.conf.layers.DenseLayer
-import org.deeplearning4j.nn.conf.layers.GravesLSTM
-import org.deeplearning4j.nn.conf.layers.OutputLayer
-import org.deeplearning4j.nn.conf.layers.RnnOutputLayer
+import org.deeplearning4j.nn.conf.layers.{DenseLayer, GravesLSTM, OutputLayer, RnnOutputLayer}
 import org.deeplearning4j.nn.multilayer.MultiLayerNetwork
 import org.deeplearning4j.nn.weights.WeightInit
 import org.deeplearning4j.optimize.listeners.ScoreIterationListener
-import org.jfree.chart.ChartFactory
-import org.jfree.chart.ChartPanel
-import org.jfree.chart.JFreeChart
+import org.jfree.chart.{ChartFactory, ChartPanel, JFreeChart}
 import org.jfree.chart.plot.PlotOrientation
-import org.jfree.data.xy.XYSeries
-import org.jfree.data.xy.XYSeriesCollection
+import org.jfree.data.xy.{XYSeries, XYSeriesCollection}
 import org.nd4j.linalg.api.ndarray.INDArray
 import org.nd4j.linalg.dataset.DataSet
 import org.nd4j.linalg.factory.Nd4j
 import org.nd4j.linalg.lossfunctions.LossFunctions
-
-import javax.swing._
-import java.util.Collections
-import java.util.List
-import java.util.Random
 
 /**Example: Train a network to reproduce certain mathematical functions, and plot the results.
  * Plotting of the network output occurs every 'plotFrequency' epochs. Thus, the plot shows the accuracy of the network

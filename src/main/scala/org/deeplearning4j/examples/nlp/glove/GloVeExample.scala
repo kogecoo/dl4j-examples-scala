@@ -1,4 +1,4 @@
-package org.deeplearning4j.examples.nlp.gloveglove
+package org.deeplearning4j.examples.nlp.glove
 
 import java.io.File
 

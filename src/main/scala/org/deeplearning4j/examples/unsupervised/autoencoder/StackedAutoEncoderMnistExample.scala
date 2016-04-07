@@ -5,8 +5,8 @@ import java.util.Collections
 import org.deeplearning4j.datasets.iterator.impl.MnistDataSetIterator
 import org.deeplearning4j.eval.Evaluation
 import org.deeplearning4j.nn.api.OptimizationAlgorithm
-import org.deeplearning4j.nn.conf.{GradientNormalization, NeuralNetConfiguration}
 import org.deeplearning4j.nn.conf.layers.{AutoEncoder, OutputLayer}
+import org.deeplearning4j.nn.conf.{GradientNormalization, NeuralNetConfiguration}
 import org.deeplearning4j.nn.multilayer.MultiLayerNetwork
 import org.deeplearning4j.nn.weights.WeightInit
 import org.deeplearning4j.optimize.api.IterationListener

@@ -1,19 +1,13 @@
 package org.deeplearning4j.examples.xor
 
 import org.deeplearning4j.eval.Evaluation
-import org.deeplearning4j.nn.api.Layer
-import org.deeplearning4j.nn.api.OptimizationAlgorithm
-import org.deeplearning4j.nn.conf.MultiLayerConfiguration
+import org.deeplearning4j.nn.api.{Layer, OptimizationAlgorithm}
 import org.deeplearning4j.nn.conf.NeuralNetConfiguration
-import org.deeplearning4j.nn.conf.NeuralNetConfiguration.ListBuilder
 import org.deeplearning4j.nn.conf.distribution.UniformDistribution
-import org.deeplearning4j.nn.conf.layers.DenseLayer
-import org.deeplearning4j.nn.conf.layers.OutputLayer
-import org.deeplearning4j.nn.conf.layers.OutputLayer.Builder
+import org.deeplearning4j.nn.conf.layers.{DenseLayer, OutputLayer}
 import org.deeplearning4j.nn.multilayer.MultiLayerNetwork
 import org.deeplearning4j.nn.weights.WeightInit
 import org.deeplearning4j.optimize.listeners.ScoreIterationListener
-import org.nd4j.linalg.api.ndarray.INDArray
 import org.nd4j.linalg.dataset.DataSet
 import org.nd4j.linalg.factory.Nd4j
 import org.nd4j.linalg.lossfunctions.LossFunctions

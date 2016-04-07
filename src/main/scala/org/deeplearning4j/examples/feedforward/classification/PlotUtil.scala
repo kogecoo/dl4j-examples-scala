@@ -1,27 +1,20 @@
 package org.deeplearning4j.examples.feedforward.classification
 
-import org.jfree.chart.ChartPanel
-import org.jfree.chart.ChartUtilities
-import org.jfree.chart.JFreeChart
-import org.jfree.chart.axis.AxisLocation
-import org.jfree.chart.axis.NumberAxis
+import java.awt._
+import javax.swing._
+
+import org.jfree.chart.{ChartPanel, ChartUtilities, JFreeChart}
+import org.jfree.chart.axis.{AxisLocation, NumberAxis}
 import org.jfree.chart.block.BlockBorder
-import org.jfree.chart.plot.DatasetRenderingOrder
-import org.jfree.chart.plot.XYPlot
+import org.jfree.chart.plot.{DatasetRenderingOrder, XYPlot}
 import org.jfree.chart.renderer.GrayPaintScale
-import org.jfree.chart.renderer.PaintScale
-import org.jfree.chart.renderer.xy.XYBlockRenderer
-import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer
+import org.jfree.chart.renderer.xy.{XYBlockRenderer, XYLineAndShapeRenderer}
 import org.jfree.chart.title.PaintScaleLegend
 import org.jfree.data.xy._
-import org.jfree.ui.RectangleEdge
-import org.jfree.ui.RectangleInsets
+import org.jfree.ui.{RectangleEdge, RectangleInsets}
 import org.nd4j.linalg.api.ndarray.INDArray
 import org.nd4j.linalg.api.ops.impl.indexaccum.IAMax
 import org.nd4j.linalg.factory.Nd4j
-
-import javax.swing._
-import java.awt._
 
 /**Simple plotting methods for the MLPClassifier examples
  * @author Alex Black

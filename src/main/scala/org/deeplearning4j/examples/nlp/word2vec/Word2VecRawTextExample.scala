@@ -11,6 +11,7 @@ import org.deeplearning4j.ui.UiServer
 import org.slf4j.LoggerFactory
 import org.springframework.core.io.ClassPathResource
 
+
 object Word2VecRawTextExample {
 
     lazy val log = LoggerFactory.getLogger(Word2VecRawTextExample.getClass)

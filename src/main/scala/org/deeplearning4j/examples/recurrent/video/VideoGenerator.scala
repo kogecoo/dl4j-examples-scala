@@ -1,19 +1,14 @@
 package org.deeplearning4j.examples.recurrent.video
 
-import org.apache.commons.io.FilenameUtils
-import org.jcodec.api.SequenceEncoder
-
 import java.awt._
-import java.awt.geom.Arc2D
-import java.awt.geom.Ellipse2D
-import java.awt.geom.Line2D
-import java.awt.geom.Rectangle2D
+import java.awt.geom.{Arc2D, Ellipse2D, Line2D, Rectangle2D}
 import java.awt.image.BufferedImage
 import java.io.File
-import java.nio.file.Files
-import java.nio.file.Paths
-import java.nio.file.StandardOpenOption
+import java.nio.file.{Files, Paths, StandardOpenOption}
 import java.util.Random
+
+import org.apache.commons.io.FilenameUtils
+import org.jcodec.api.SequenceEncoder
 
 import scala.collection.mutable
 
