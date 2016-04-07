@@ -1,6 +1,7 @@
 package org.deeplearning4j.examples.mlp
 
 
+import java.util.Collections
 import java.util.Random
 
 import org.deeplearning4j.datasets.iterator.impl.MnistDataSetIterator
@@ -11,7 +12,6 @@ import org.deeplearning4j.optimize.listeners.ScoreIterationListener
 import org.nd4j.linalg.api.ndarray.INDArray
 import org.slf4j.{Logger, LoggerFactory}
 
-import scala.collection.JavaConverters._
 import scala.collection.mutable
 
 
@@ -47,7 +47,7 @@ object MLPMnistCMGSExample {
         log.info("Build model....")
         val model = new CMGSNet(numRows, numColumns, outputNum, seed, iterations).init()
 
-        model.setListeners(Seq[IterationListener](new ScoreIterationListener(listenerFreq)).asJava)
+        model.setListeners(Collections.singletonList[IterationListener](new ScoreIterationListener(listenerFreq)))
 
         log.info("Train model....")
         while(iter.hasNext) {

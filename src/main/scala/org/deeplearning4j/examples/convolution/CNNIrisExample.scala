@@ -20,7 +20,8 @@ import org.nd4j.linalg.factory.Nd4j
 import org.nd4j.linalg.lossfunctions.LossFunctions
 import org.slf4j.LoggerFactory
 
-import scala.collection.JavaConverters._
+import java.util.Collections
+
 
 object CNNIrisExample {
 
@@ -55,7 +56,7 @@ object CNNIrisExample {
                 .iterations(iterations)
                 .optimizationAlgo(OptimizationAlgorithm.STOCHASTIC_GRADIENT_DESCENT)
                 .list(2)
-                .layer(0, new ConvolutionLayer.Builder(Array(1, 1):_*)
+                .layer(0, new ConvolutionLayer.Builder(1, 1)
                         .nIn(nChannels)
                         .nOut(1000)
                         .activation("relu")
@@ -74,7 +75,7 @@ object CNNIrisExample {
         log.info("Build model....")
         val model: MultiLayerNetwork = new MultiLayerNetwork(conf)
         model.init()
-        model.setListeners(Seq[IterationListener](new ScoreIterationListener(listenerFreq)).asJava)
+        model.setListeners(Collections.singletonList[IterationListener](new ScoreIterationListener(listenerFreq)))
 
         log.info("Train model....")
         System.out.println("Training on " + trainTest.getTrain.labelCounts())
