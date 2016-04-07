@@ -9,11 +9,12 @@ import org.apache.commons.io.FileUtils
 import org.deeplearning4j.nn.api.{Layer, OptimizationAlgorithm}
 import org.deeplearning4j.nn.conf.distribution.UniformDistribution
 import org.deeplearning4j.nn.conf.layers.{GravesLSTM, RnnOutputLayer}
-import org.deeplearning4j.nn.conf.{MultiLayerConfiguration, NeuralNetConfiguration, Updater}
+import org.deeplearning4j.nn.conf.{BackpropType, MultiLayerConfiguration, NeuralNetConfiguration, Updater}
 import org.deeplearning4j.nn.multilayer.MultiLayerNetwork
 import org.deeplearning4j.nn.weights.WeightInit
 import org.deeplearning4j.optimize.listeners.ScoreIterationListener
 import org.nd4j.linalg.api.ndarray.INDArray
+import org.nd4j.linalg.dataset.DataSet
 import org.nd4j.linalg.factory.Nd4j
 import org.nd4j.linalg.lossfunctions.LossFunctions.LossFunction
 
@@ -25,31 +26,28 @@ import org.nd4j.linalg.lossfunctions.LossFunctions.LossFunction
   "The Unreasonable Effectiveness of Recurrent Neural Networks"
   http://karpathy.github.io/2015/05/21/rnn-effectiveness/
 
-  Note that this example has not been well tuned - better performance is likely possible with better hyperparameters
+  One minor difference between this example and Karpathy's work:
+  The LSTM architectures appear to differ somewhat. GravesLSTM has peephole connections that
+  Karpathy's char-rnn implementation appears to lack. See GravesLSTM javadoc for details.
+  There are pros and cons to both architectures (addition of peephole connections is a more powerful
+  model but has more parameters per unit), though they are not radically different in practice.
 
-  Some differences between this example and Karpathy's work:
-  - The LSTM architectures appear to differ somewhat. GravesLSTM has peephole connections that
-    Karpathy's char-rnn implementation appears to lack. See GravesLSTM javadoc for details.
-    There are pros and cons to both architectures (addition of peephole connections is a more powerful
-    model but has more parameters per unit), though they are not radically different in practice.
-  - Karpathy uses truncated backpropagation through time (BPTT) on full character
-    sequences, whereas this example uses standard (non-truncated) BPTT on partial/subset sequences.
-    Truncated BPTT is probably the preferred method of training for this sort of problem, and is configurable
-    using the .backpropType(BackpropType.TruncatedBPTT).tBPTTForwardLength().tBPTTBackwardLength() options
+ 	This example is set up to train on the Complete Works of William Shakespeare, downloaded
+  from Project Gutenberg. Training on other text sources should be relatively easy to implement.
 
-    Truncated BPTT is probably the preferred method of training for this sort of problem, and will
-    be added to DL4J (and this example) in the future.
-
-  This example is set up to train on the Complete Works of William Shakespeare, downloaded
-   from Project Gutenberg. Training on other text sources should be relatively easy to implement.
+   For more details on RNNs in DL4J, see the following:
+   http://deeplearning4j.org/usingrnns
+   http://deeplearning4j.org/lstm
+   http://deeplearning4j.org/recurrentnetwork
  */
 object GravesLSTMCharModellingExample {
   def main(args: Array[String]) = {
     val lstmLayerSize = 200          //Number of units in each GravesLSTM layer
     val miniBatchSize = 32            //Size of mini batch to use when  training
-    val examplesPerEpoch = 50 * miniBatchSize  //i.e., how many examples to learn on between generating samples
-    val exampleLength = 100          //Length of each training example
-    val numEpochs = 30              //Total number of training + sample generation epochs
+    val exampleLength = 1000					//Length of each training example sequence to use. This could certainly be increased
+    val tbpttLength = 50                       //Length for truncated backpropagation through time. i.e., do parameter updates ever 50 characters
+    val numEpochs = 1							//Total number of training epochs
+    val generateSamplesEveryNMinibatches = 10  //How frequently to generate samples from the network? 1000 characters / 50 tbptt length: 20 parameter updates per minibatch
     val nSamplesToGenerate = 4          //Number of samples to generate after each training epoch
     val nCharactersToSample = 300        //Length of each sample to generate
     val generationInitialization: String = null    //Optional character initialization; a random character is used if null
@@ -59,7 +57,7 @@ object GravesLSTMCharModellingExample {
 
     //Get a DataSetIterator that handles vectorization of text into something we can use to train
     // our GravesLSTM network.
-    val iter: CharacterIterator = getShakespeareIterator(miniBatchSize,exampleLength,examplesPerEpoch)
+    val iter: CharacterIterator = getShakespeareIterator(miniBatchSize,exampleLength)
     val nOut: Int = iter.totalOutcomes()
 
     //Set up network configuration:
@@ -70,19 +68,16 @@ object GravesLSTMCharModellingExample {
       .seed(12345)
       .regularization(true)
       .l2(0.001)
+        .weightInit(WeightInit.XAVIER)
+        .updater(Updater.RMSPROP)
       .list(3)
       .layer(0, new GravesLSTM.Builder().nIn(iter.inputColumns()).nOut(lstmLayerSize)
-          .updater(Updater.RMSPROP)
-          .activation("tanh").weightInit(WeightInit.DISTRIBUTION)
-          .dist(new UniformDistribution(-0.08, 0.08)).build())
+          .activation("tanh").build())
       .layer(1, new GravesLSTM.Builder().nIn(lstmLayerSize).nOut(lstmLayerSize)
-          .updater(Updater.RMSPROP)
-          .activation("tanh").weightInit(WeightInit.DISTRIBUTION)
-          .dist(new UniformDistribution(-0.08, 0.08)).build())
+          .activation("tanh").build())
       .layer(2, new RnnOutputLayer.Builder(LossFunction.MCXENT).activation("softmax")    //MCXENT + softmax for classification
-          .updater(Updater.RMSPROP)
-          .nIn(lstmLayerSize).nOut(nOut).weightInit(WeightInit.DISTRIBUTION)
-          .dist(new UniformDistribution(-0.08, 0.08)).build())
+          .nIn(lstmLayerSize).nOut(nOut).build())
+       .backpropType(BackpropType.TruncatedBPTT).tBPTTForwardLength(tbpttLength).tBPTTBackwardLength(tbpttLength)
       .pretrain(false).backprop(true)
       .build()
 
@@ -99,21 +94,26 @@ object GravesLSTMCharModellingExample {
     }).sum
     println("Total number of network parameters: " + totalNumParams)
 
+    var miniBatchNumber = 0
     //Do training, and then generate and print samples from network
     (0 until numEpochs).foreach { i =>
-      net.fit(iter)
-
-      println("--------------------")
-      println("Completed epoch " + i )
-      println("Sampling characters from network given initialization \"" + ("") + "\"")
-      val samples: Array[String] = sampleCharactersFromNetwork(generationInitialization, net, iter, rng, nCharactersToSample, nSamplesToGenerate)
-      samples.indices.foreach { j =>
-        println("----- Sample " + j + " -----")
-        println(samples(j))
-        println()
-      }
-
-      iter.reset()  //Reset iterator for another epoch
+        while(iter.hasNext()){
+            val ds = iter.next()
+            net.fit(ds);
+            miniBatchNumber += 1
+            if(miniBatchNumber % generateSamplesEveryNMinibatches == 0){
+                println("--------------------")
+                println("Completed " + miniBatchNumber + " minibatches of size " + miniBatchSize + "x" + exampleLength + " characters" )
+                println("Sampling characters from network given initialization \"" + (if (generationInitialization == null) "" else generationInitialization) + "\"")
+                val samples = sampleCharactersFromNetwork(generationInitialization,net,iter,rng,nCharactersToSample,nSamplesToGenerate)
+                samples.indices.foreach { j =>
+                    println("----- Sample " + j + " -----")
+                    println(samples(j))
+                    println()
+                }
+            }
+        }
+        iter.reset()  //Reset iterator for another epoch
     }
 
     println("\n\nExample complete")
@@ -122,10 +122,9 @@ object GravesLSTMCharModellingExample {
   /** Downloads Shakespeare training data and stores it locally (temp directory). Then set up and return a simple
    * DataSetIterator that does vectorization based on the text.
    * @param miniBatchSize Number of text segments in each training mini-batch
-   * @param exampleLength Number of characters in each text segment.
-   * @param examplesPerEpoch Number of examples we want in an 'epoch'. 
+   * @param sequenceLength Number of characters in each text segment.
    */
-  private def getShakespeareIterator(miniBatchSize: Int, exampleLength: Int, examplesPerEpoch: Int): CharacterIterator = {
+  private def getShakespeareIterator(miniBatchSize: Int, sequenceLength: Int): CharacterIterator = {
     //The Complete Works of William Shakespeare
     //5.3MB file in UTF-8 Encoding, ~5.4 million characters
     //https://www.gutenberg.org/ebooks/100
@@ -144,7 +143,7 @@ object GravesLSTMCharModellingExample {
 
     val validCharacters: Array[Char] = CharacterIterator.getMinimalCharacterSet  //Which characters are allowed? Others will be removed
     new CharacterIterator(fileLocation, Charset.forName("UTF-8"),
-        miniBatchSize, exampleLength, examplesPerEpoch, validCharacters, new Random(12345), true)
+        miniBatchSize, sequenceLength, validCharacters, new Random(12345))
   }
 
   /** Generate a sample from the network, given an (optional, possibly null) initialization. Initialization
