@@ -86,8 +86,8 @@ object Word2VecUptrainingExample {
         val tokenizerFactory: TokenizerFactory = new DefaultTokenizerFactory()
         tokenizerFactory.setTokenPreProcessor(new CommonPreprocessor())
 
-        word2Vec.setSentenceIter(iterator)
         word2Vec.setTokenizerFactory(tokenizerFactory)
+        word2Vec.setSentenceIter(iterator)
 
         log.info("Word2vec uptraining...")
 
