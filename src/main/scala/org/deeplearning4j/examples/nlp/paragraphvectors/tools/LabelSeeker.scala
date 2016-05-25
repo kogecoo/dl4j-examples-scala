@@ -12,7 +12,8 @@ import scala.collection.mutable
 
 /**
  * This is primitive seeker for nearest labels.
- * It's used instead of basic wordsNearest method because for ParagraphVectors only labels should be taken into account, not individual words
+ * It's used instead of basic wordsNearest method because for ParagraphVectors
+ * only labels should be taken into account, not individual words
  *
  * @author raver119@gmail.com
  */
@@ -21,7 +22,8 @@ class LabelSeeker(labelsUsed: java.util.List[String], lookupTable: InMemoryLooku
     if (labelsUsed.isEmpty) throw new IllegalStateException("You can't have 0 labels used for ParagraphVectors")
 
     /**
-     * This method accepts vector, that represents any document, and returns distances between this document, and previously trained categories
+     * This method accepts vector, that represents any document,
+     * and returns distances between this document, and previously trained categories
      * @return
      */
     def getScores(vector: INDArray): java.util.List[Pair[String, Double]] = {
