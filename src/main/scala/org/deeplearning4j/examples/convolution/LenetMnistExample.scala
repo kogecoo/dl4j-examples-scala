@@ -26,7 +26,7 @@ object LenetMnistExample {
 
         val nChannels = 1
         val outputNum = 10
-        val batchSize = 1000
+        val batchSize = 64
         val nEpochs = 10
         val iterations = 1
         val seed = 123
@@ -44,20 +44,30 @@ object LenetMnistExample {
                 .weightInit(WeightInit.XAVIER)
                 .optimizationAlgo(OptimizationAlgorithm.STOCHASTIC_GRADIENT_DESCENT)
                 .updater(Updater.NESTEROVS).momentum(0.9)
-                .list(4)
+                .list(6)
                 .layer(0, new ConvolutionLayer.Builder(5, 5)
                         .nIn(nChannels)
                         .stride(1, 1)
-                        .nOut(20).dropOut(0.5)
-                        .activation("relu")
+                        .nOut(20)
+                        .activation("identity")
                         .build())
                 .layer(1, new SubsamplingLayer.Builder(SubsamplingLayer.PoolingType.MAX)
                         .kernelSize(2,2)
                         .stride(2,2)
                         .build())
-                .layer(2, new DenseLayer.Builder().activation("relu")
+                .layer(2, new ConvolutionLayer.Builder(5, 5)
+                        .nIn(nChannels)
+                        .stride(1, 1)
+                        .nOut(50)
+                        .activation("identity")
+                        .build())
+                .layer(3, new SubsamplingLayer.Builder(SubsamplingLayer.PoolingType.MAX)
+                        .kernelSize(2,2)
+                        .stride(2,2)
+                        .build())
+                .layer(4, new DenseLayer.Builder().activation("relu")
                         .nOut(500).build())
-                .layer(3, new OutputLayer.Builder(LossFunctions.LossFunction.NEGATIVELOGLIKELIHOOD)
+                .layer(5, new OutputLayer.Builder(LossFunctions.LossFunction.NEGATIVELOGLIKELIHOOD)
                         .nOut(outputNum)
                         .activation("softmax")
                         .build())
