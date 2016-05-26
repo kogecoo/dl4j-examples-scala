@@ -27,8 +27,8 @@ object MLPMnistSingleLayerExample {
         val numEpochs = 15
 
         //Get the DataSetIterators:
-        val mnistTrain = new MnistDataSetIterator(batchSize, true, rngSeed);
-        val mnistTest = new MnistDataSetIterator(batchSize, false, rngSeed);
+        val mnistTrain = new MnistDataSetIterator(batchSize, true, rngSeed)
+        val mnistTest = new MnistDataSetIterator(batchSize, false, rngSeed)
 
         log.info("Build model....")
         val conf = new NeuralNetConfiguration.Builder()
@@ -63,10 +63,10 @@ object MLPMnistSingleLayerExample {
 
         log.info("Evaluate model....")
         val eval = new Evaluation(outputNum)
-        while(mnistTest.hasNext()) {
-            val next = mnistTest.next();
-            val output = model.output(next.getFeatureMatrix());
-            eval.eval(next.getLabels(), output);
+        while (mnistTest.hasNext) {
+            val next = mnistTest.next()
+            val output = model.output(next.getFeatureMatrix)
+            eval.eval(next.getLabels, output)
         }
 
         log.info(eval.stats())
