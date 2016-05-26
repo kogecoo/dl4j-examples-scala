@@ -90,8 +90,8 @@ object LenetMnistExample {
             val eval = new Evaluation(outputNum)
             while(mnistTest.hasNext){
                 val ds = mnistTest.next()
-                val output = model.output(ds.getFeatureMatrix())
-                eval.eval(ds.getLabels(), output)
+                val output = model.output(ds.getFeatureMatrix, false)
+                eval.eval(ds.getLabels, output)
             }
             log.info(eval.stats())
             mnistTest.reset()
