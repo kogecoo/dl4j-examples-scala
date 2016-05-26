@@ -107,8 +107,8 @@ class CharacterIterator(textFilePath: String, textFileEncoding: Charset, miniBat
     // dimension 0 = number of examples in minibatch
     // dimension 1 = size of each vector (i.e., number of characters)
     // dimension 2 = length of each time series/example
-    val input = Nd4j.zeros(currMinibatchSize,validCharacters.length,exampleLength)
-    val labels = Nd4j.zeros(currMinibatchSize,validCharacters.length,exampleLength)
+    val input = Nd4j.create(Array[Int](currMinibatchSize,validCharacters.length,exampleLength), 'f')
+    val labels = Nd4j.create(Array[Int](currMinibatchSize,validCharacters.length,exampleLength), 'f')
 
     (0 until currMinibatchSize).foreach { i =>
         val startIdx = exampleStartOffsets.removeFirst()
