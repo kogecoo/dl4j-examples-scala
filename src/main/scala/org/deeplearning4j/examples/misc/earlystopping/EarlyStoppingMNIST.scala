@@ -45,20 +45,20 @@ object EarlyStoppingMNIST {
                 .regularization(true).l2(0.0005)
                 .learningRate(0.02)
                 .weightInit(WeightInit.XAVIER)
+                .activation("relu")
                 .optimizationAlgo(OptimizationAlgorithm.STOCHASTIC_GRADIENT_DESCENT)
                 .updater(Updater.NESTEROVS).momentum(0.9)
-                .list(4)
+                .list()
                 .layer(0, new ConvolutionLayer.Builder(5, 5)
                         .nIn(nChannels)
                         .stride(1, 1)
                         .nOut(20).dropOut(0.5)
-                        .activation("relu")
                         .build())
                 .layer(1, new SubsamplingLayer.Builder(SubsamplingLayer.PoolingType.MAX)
                         .kernelSize(2, 2)
                         .stride(2, 2)
                         .build())
-                .layer(2, new DenseLayer.Builder().activation("relu")
+                .layer(2, new DenseLayer.Builder()
                         .nOut(500).build())
                 .layer(3, new OutputLayer.Builder(LossFunctions.LossFunction.NEGATIVELOGLIKELIHOOD)
                         .nOut(outputNum)
@@ -75,8 +75,8 @@ object EarlyStoppingMNIST {
         val tempDir: String = System.getProperty("java.io.tmpdir")
         val exampleDirectory: String = FilenameUtils.concat(tempDir, "DL4JEarlyStoppingExample/")
 
-        val saver: EarlyStoppingModelSaver = new LocalFileModelSaver(exampleDirectory)
-        val esConf: EarlyStoppingConfiguration = new EarlyStoppingConfiguration.Builder()
+        val saver = new LocalFileModelSaver(exampleDirectory)
+        val esConf = new EarlyStoppingConfiguration.Builder()
                 .epochTerminationConditions(new MaxEpochsTerminationCondition(50)) //Max of 50 epochs
                 .evaluateEveryNEpochs(1)
                 .iterationTerminationConditions(new MaxTimeIterationTerminationCondition(20, TimeUnit.MINUTES)) //Max of 20 minutes
@@ -84,10 +84,10 @@ object EarlyStoppingMNIST {
                 .modelSaver(saver)
                 .build()
 
-        val trainer: EarlyStoppingTrainer = new EarlyStoppingTrainer(esConf,configuration,mnistTrain1024)
+        val trainer = new EarlyStoppingTrainer(esConf,configuration,mnistTrain1024)
 
         //Conduct early stopping training:
-        val result: EarlyStoppingResult = trainer.fit()
+        val result = trainer.fit()
         System.out.println("Termination reason: " + result.getTerminationReason)
         System.out.println("Termination details: " + result.getTerminationDetails)
         System.out.println("Total epochs: " + result.getTotalEpochs)
