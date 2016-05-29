@@ -6,6 +6,8 @@ scalaVersion := "2.10.4"
 
 lazy val root = project.in(file("."))
 
+classpathTypes += "maven-plugin"
+
 libraryDependencies ++= Seq(
   "commons-io" % "commons-io" % "2.4",
   "com.google.guava" % "guava" % "19.0",
