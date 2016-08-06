@@ -17,7 +17,7 @@ import org.nd4j.linalg.factory.Nd4j
 import org.nd4j.linalg.lossfunctions.LossFunctions.LossFunction
 
 /**GravesLSTM Character modelling example
- * @author Alex Black
+  * @author Alex Black
 
    Example: Train a LSTM RNN to generates text, one character at a time.
   This example is somewhat inspired by Andrej Karpathy's blog post,
@@ -37,7 +37,7 @@ import org.nd4j.linalg.lossfunctions.LossFunctions.LossFunction
    http://deeplearning4j.org/usingrnns
    http://deeplearning4j.org/lstm
    http://deeplearning4j.org/recurrentnetwork
- */
+  */
 object GravesLSTMCharModellingExample {
   def main(args: Array[String]) = {
     val lstmLayerSize = 200          //Number of units in each GravesLSTM layer
@@ -66,16 +66,16 @@ object GravesLSTMCharModellingExample {
       .seed(12345)
       .regularization(true)
       .l2(0.001)
-        .weightInit(WeightInit.XAVIER)
-        .updater(Updater.RMSPROP)
+      .weightInit(WeightInit.XAVIER)
+      .updater(Updater.RMSPROP)
       .list()
       .layer(0, new GravesLSTM.Builder().nIn(iter.inputColumns()).nOut(lstmLayerSize)
-          .activation("tanh").build())
+        .activation("tanh").build())
       .layer(1, new GravesLSTM.Builder().nIn(lstmLayerSize).nOut(lstmLayerSize)
-          .activation("tanh").build())
+        .activation("tanh").build())
       .layer(2, new RnnOutputLayer.Builder(LossFunction.MCXENT).activation("softmax")    //MCXENT + softmax for classification
-          .nIn(lstmLayerSize).nOut(nOut).build())
-       .backpropType(BackpropType.TruncatedBPTT).tBPTTForwardLength(tbpttLength).tBPTTBackwardLength(tbpttLength)
+        .nIn(lstmLayerSize).nOut(nOut).build())
+      .backpropType(BackpropType.TruncatedBPTT).tBPTTForwardLength(tbpttLength).tBPTTBackwardLength(tbpttLength)
       .pretrain(false).backprop(true)
       .build()
 
@@ -95,33 +95,33 @@ object GravesLSTMCharModellingExample {
     var miniBatchNumber = 0
     //Do training, and then generate and print samples from network
     (0 until numEpochs).foreach { i =>
-        while(iter.hasNext()){
-            val ds = iter.next()
-            net.fit(ds);
-            miniBatchNumber += 1
-            if(miniBatchNumber % generateSamplesEveryNMinibatches == 0){
-                println("--------------------")
-                println("Completed " + miniBatchNumber + " minibatches of size " + miniBatchSize + "x" + exampleLength + " characters" )
-                println("Sampling characters from network given initialization \"" + (if (generationInitialization == null) "" else generationInitialization) + "\"")
-                val samples = sampleCharactersFromNetwork(generationInitialization,net,iter,rng,nCharactersToSample,nSamplesToGenerate)
-                samples.indices.foreach { j =>
-                    println("----- Sample " + j + " -----")
-                    println(samples(j))
-                    println()
-                }
-            }
+      while(iter.hasNext()){
+        val ds = iter.next()
+        net.fit(ds);
+        miniBatchNumber += 1
+        if(miniBatchNumber % generateSamplesEveryNMinibatches == 0){
+          println("--------------------")
+          println("Completed " + miniBatchNumber + " minibatches of size " + miniBatchSize + "x" + exampleLength + " characters" )
+          println("Sampling characters from network given initialization \"" + (if (generationInitialization == null) "" else generationInitialization) + "\"")
+          val samples = sampleCharactersFromNetwork(generationInitialization,net,iter,rng,nCharactersToSample,nSamplesToGenerate)
+          samples.indices.foreach { j =>
+            println("----- Sample " + j + " -----")
+            println(samples(j))
+            println()
+          }
         }
-        iter.reset()  //Reset iterator for another epoch
+      }
+      iter.reset()  //Reset iterator for another epoch
     }
 
     println("\n\nExample complete")
   }
 
   /** Downloads Shakespeare training data and stores it locally (temp directory). Then set up and return a simple
-   * DataSetIterator that does vectorization based on the text.
-   * @param miniBatchSize Number of text segments in each training mini-batch
-   * @param sequenceLength Number of characters in each text segment.
-   */
+    * DataSetIterator that does vectorization based on the text.
+    * @param miniBatchSize Number of text segments in each training mini-batch
+    * @param sequenceLength Number of characters in each text segment.
+    */
   private def getShakespeareIterator(miniBatchSize: Int, sequenceLength: Int): CharacterIterator = {
     //The Complete Works of William Shakespeare
     //5.3MB file in UTF-8 Encoding, ~5.4 million characters
@@ -141,17 +141,17 @@ object GravesLSTMCharModellingExample {
 
     val validCharacters: Array[Char] = CharacterIterator.getMinimalCharacterSet  //Which characters are allowed? Others will be removed
     new CharacterIterator(fileLocation, Charset.forName("UTF-8"),
-        miniBatchSize, sequenceLength, validCharacters, new Random(12345))
+      miniBatchSize, sequenceLength, validCharacters, new Random(12345))
   }
 
   /** Generate a sample from the network, given an (optional, possibly null) initialization. Initialization
-   * can be used to 'prime' the RNN with a sequence you want to extend/continue.<br>
-   * Note that the initalization is used for all samples
-   * @param initialization String, may be null. If null, select a random character as initialization for all samples
-   * @param charactersToSample Number of characters to sample from network (excluding initialization)
-   * @param net MultiLayerNetwork with one or more GravesLSTM/RNN layers and a softmax output layer
-   * @param iter CharacterIterator. Used for going from indexes back to characters
-   */
+    * can be used to 'prime' the RNN with a sequence you want to extend/continue.<br>
+    * Note that the initalization is used for all samples
+    * @param initialization String, may be null. If null, select a random character as initialization for all samples
+    * @param charactersToSample Number of characters to sample from network (excluding initialization)
+    * @param net MultiLayerNetwork with one or more GravesLSTM/RNN layers and a softmax output layer
+    * @param iter CharacterIterator. Used for going from indexes back to characters
+    */
   private def sampleCharactersFromNetwork(initialization: String, net: MultiLayerNetwork, iter: CharacterIterator, rng: Random, charactersToSample: Int, numSamples: Int): Array[String] = {
     //Set up initialization. If no initialization: use a random character
     val initStr: String = if (initialization == null) {
@@ -170,7 +170,7 @@ object GravesLSTMCharModellingExample {
       }
     }
 
-    val sb = Array.fill(numSamples)(new StringBuilder(initialization))
+    val sb = Array.fill(numSamples)(new StringBuilder(initStr))
 
     //Sample from network (and feed samples back into input) one character at a time (for all samples)
     //Sampling is done in parallel here
@@ -195,9 +195,9 @@ object GravesLSTMCharModellingExample {
   }
 
   /** Given a probability distribution over discrete classes, sample from the distribution
-   * and return the generated class index.
-   * @param distribution Probability distribution over classes. Must sum to 1.0
-   */
+    * and return the generated class index.
+    * @param distribution Probability distribution over classes. Must sum to 1.0
+    */
   private def sampleFromDistribution(distribution: Array[Double], rng: Random) = {
     val d = rng.nextDouble()
     val accum = distribution.scanLeft(0.0)(_ + _).tail
