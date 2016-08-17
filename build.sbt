@@ -1,28 +1,29 @@
-name := "deeplearning4j-examples-scala"
-
-version := "1.0"
-
-scalaVersion := "2.10.4"
-
 lazy val root = project.in(file("."))
+    .aggregate(dl4j_examples, dl4j_spark_examples, datavec_examples)
+    .settings(name := "deeplearningj4j-examples")
+    .settings(commonSettings:_*)
 
-classpathTypes += "maven-plugin"
+lazy val dl4j_examples = project.in(file("dl4j-examples"))
+  .settings(name := "dl4j-examples")
+  .settings(commonSettings:_*)
 
-libraryDependencies ++= Seq(
-  "commons-io" % "commons-io" % "2.4",
-  "com.google.guava" % "guava" % "19.0",
-  "jfree" % "jfreechart" % "1.0.13",
-  "org.deeplearning4j" % "deeplearning4j-core" % "0.4-rc3.10",
-  "org.deeplearning4j" % "deeplearning4j-nlp" % "0.4-rc3.10",
-  "org.deeplearning4j" % "deeplearning4j-ui" % "0.4-rc3.10",
-  "org.jblas" % "jblas" % "1.2.4",
-  "org.nd4j" % "canova-nd4j-codec" % "0.0.0.16",
-  "org.nd4j" % "nd4j-native" % "0.4-rc3.9"
+lazy val dl4j_spark_examples = project.in(file("dl4j-spark-examples"))
+  .settings(name := "dl4j-spark-examples")
+  .settings(commonSettings:_*)
+
+lazy val datavec_examples = project.in(file("datavec-examples"))
+  .settings(name := "datavec-examples")
+  .settings(commonSettings:_*)
+
+lazy val commonSettings = Seq(
+  version := "1.0",
+  scalaVersion := "2.10.6",
+  classpathTypes += "maven-plugin",
+  resolvers ++= commonResolvers
 )
 
-
-resolvers += "Sonatype OSS Snapshots" at "https://oss.sonatype.org/content/repositories/snapshots"
-
-resolvers += "Sonatype release Repository" at "http://oss.sonatype.org/service/local/staging/deploy/maven2/"
-
-resolvers += "Local Maven Repository" at "file:///"+Path.userHome.absolutePath+"/.m2/repository/"
+lazy val commonResolvers = Seq(
+  "Sonatype OSS Snapshots" at "https://oss.sonatype.org/content/repositories/snapshots",
+  "Sonatype release Repository" at "http://oss.sonatype.org/service/local/staging/deploy/maven2/",
+  "Local Maven Repository" at "file://"+Path.userHome.absolutePath+"/.m2/repository/"
+)
