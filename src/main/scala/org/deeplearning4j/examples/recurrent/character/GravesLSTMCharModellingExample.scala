@@ -24,12 +24,6 @@ import org.nd4j.linalg.lossfunctions.LossFunctions.LossFunction
   "The Unreasonable Effectiveness of Recurrent Neural Networks"
   http://karpathy.github.io/2015/05/21/rnn-effectiveness/
 
-  One minor difference between this example and Karpathy's work:
-  The LSTM architectures appear to differ somewhat. GravesLSTM has peephole connections that
-  Karpathy's char-rnn implementation appears to lack. See GravesLSTM javadoc for details.
-  There are pros and cons to both architectures (addition of peephole connections is a more powerful
-  model but has more parameters per unit), though they are not radically different in practice.
-
  	This example is set up to train on the Complete Works of William Shakespeare, downloaded
   from Project Gutenberg. Training on other text sources should be relatively easy to implement.
 
@@ -122,7 +116,7 @@ object GravesLSTMCharModellingExample {
     * @param miniBatchSize Number of text segments in each training mini-batch
     * @param sequenceLength Number of characters in each text segment.
     */
-  private def getShakespeareIterator(miniBatchSize: Int, sequenceLength: Int): CharacterIterator = {
+  def getShakespeareIterator(miniBatchSize: Int, sequenceLength: Int): CharacterIterator = {
     //The Complete Works of William Shakespeare
     //5.3MB file in UTF-8 Encoding, ~5.4 million characters
     //https://www.gutenberg.org/ebooks/100
@@ -198,7 +192,7 @@ object GravesLSTMCharModellingExample {
     * and return the generated class index.
     * @param distribution Probability distribution over classes. Must sum to 1.0
     */
-  private def sampleFromDistribution(distribution: Array[Double], rng: Random) = {
+  def sampleFromDistribution(distribution: Array[Double], rng: Random) = {
     val d = rng.nextDouble()
     val accum = distribution.scanLeft(0.0)(_ + _).tail
     val exceeds = accum.zipWithIndex.filter(_._1 >= d)
