@@ -60,7 +60,7 @@ object MLPClassifierLinear {
                 .optimizationAlgo(OptimizationAlgorithm.STOCHASTIC_GRADIENT_DESCENT)
                 .learningRate(learningRate)
                 .updater(Updater.NESTEROVS).momentum(0.9)
-                .list(2)
+                .list()
                 .layer(0, new DenseLayer.Builder().nIn(numInputs).nOut(numHiddenNodes)
                         .weightInit(WeightInit.XAVIER)
                         .activation("relu")
@@ -74,7 +74,7 @@ object MLPClassifierLinear {
 
         val model: MultiLayerNetwork = new MultiLayerNetwork(conf)
         model.init()
-        model.setListeners(Collections.singletonList[IterationListener](new ScoreIterationListener(1)))
+        model.setListeners(Collections.singletonList[IterationListener](new ScoreIterationListener(10)))  //Print score every 10 parameter updates
 
 
         (0 until nEpochs).foreach { _ => model.fit( trainIter ) }

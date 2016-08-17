@@ -56,7 +56,7 @@ object BasicRNNExample {
 		builder.updater(Updater.RMSPROP)
 		builder.weightInit(WeightInit.XAVIER)
 
-		val listBuilder: ListBuilder = builder.list(HIDDEN_LAYER_CONT + 1)
+		val listBuilder: ListBuilder = builder.list()
 
 		// first difference, for rnns we need to use GravesLSTM.Builder
 		Seq.range(0, HIDDEN_LAYER_CONT).foreach { i =>

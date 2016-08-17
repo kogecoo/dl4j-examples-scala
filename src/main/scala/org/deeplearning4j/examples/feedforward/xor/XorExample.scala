@@ -1,4 +1,4 @@
-package org.deeplearning4j.examples.xor
+package org.deeplearning4j.examples.feedforward.xor
 
 import org.deeplearning4j.eval.Evaluation
 import org.deeplearning4j.nn.api.{Layer, OptimizationAlgorithm}
@@ -150,8 +150,8 @@ object XorExample {
 		val net: MultiLayerNetwork = new MultiLayerNetwork(conf)
 		net.init()
 
-		// add an litener which outputs the error every 10 samples
-		net.setListeners(new ScoreIterationListener(10))
+		// add an listener which outputs the error every 100 parameter updates
+		net.setListeners(new ScoreIterationListener(100))
 
 		// C&P from GravesLSTMCharModellingExample
 		// Print the number of parameters in the network (and for each layer)
