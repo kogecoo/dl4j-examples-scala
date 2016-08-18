@@ -1,7 +1,7 @@
-DL4J Release 0.4 Examples for Scala
+Deeplearning4J Examples for Scala
 =========================
 
- This project is a simple Scala porting of [deeplearning4j-0.4-example](https://github.com/deeplearning4j/dl4j-0.4-examples).
+ This project is a simple Scala porting of [deeplearning4j-example](https://github.com/deeplearning4j/dl4j-examples).
 
 The main purpose of this project is:
 
@@ -15,41 +15,27 @@ If you want to write codes in the scala manner strongly,
 you should consider to use [deeplearning4s](https://github.com/deeplearning4j/deeplearning4s).
 
 
-### Before building this project
- Before you build this library, it needs to modify the line in build.sbt for specifying your OS environment.
-The target line is
+### Getting Started
 
-`"org.nd4j" % "nd4j-native" % "0.4-rc3.9",`
+ This repository has 2 project.
+To choose and run a project, followings commands are useful.
 
-and you need to modify it to
+* dl4j example
+  * `sbt "; project dl4j_example; run"`
 
-`"org.nd4j" % "nd4j-native" % "0.4-rc3.9" classifier "" classifier "[OS ENVIRONMENT]",`
-
-Note that [OS ENVIRONMENT] will be specified like:
-
-* windows-x86_64
-* linux-x86_64
-* macosx-x86_64
-
-For example, in OSX case, the line is:
-
-* `"org.nd4j" % "nd4j-native" % "0.4-rc3.9" classifier "" classifier "macosx-x86_64",`
-
-For more detailed information will be found in [Nd4j document page](http://nd4j.org/dependencies.html).
+* datavec example
+  * `sbt "; project datavec_example; run"`
 
 ---
 
 Repository of Deeplearning4J neural net examples:
 
+- MLP Neural Nets
 - Convolutional Neural Nets
 - Recurrent Neural Nets
-- Deep-belief Neural Nets
-- Restricted Boltzmann Machines
-- Recursive Neural Nets
 - TSNE
 - Word2Vec & GloVe
 - Anomaly Detection
-
 
 ---
 
