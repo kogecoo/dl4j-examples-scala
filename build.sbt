@@ -3,6 +3,10 @@ lazy val root = project.in(file("."))
     .settings(name := "deeplearningj4j-examples")
     .settings(commonSettings:_*)
 
+lazy val dl4j_cuda_specific_examples = project.in(file("dl4j-cuda-specific-examples"))
+  .settings(name := "dl4j-cuda-specific-examples")
+  .settings(commonSettings:_*)
+
 lazy val dl4j_examples = project.in(file("dl4j-examples"))
   .settings(name := "dl4j-examples")
   .settings(commonSettings:_*)
