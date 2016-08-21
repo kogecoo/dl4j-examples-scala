@@ -11,7 +11,7 @@ The main purpose of this project is:
 
 
 Every examples in this demonstration directly calls Java APIs of DL4J.
-If you want to write codes in the scala manner strongly,
+If you strongly want to write codes in the scala manner,
 you should consider to use [deeplearning4s](https://github.com/deeplearning4j/deeplearning4s).
 
 
