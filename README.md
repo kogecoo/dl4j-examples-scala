@@ -21,13 +21,13 @@ you should consider to use [deeplearning4s](https://github.com/deeplearning4j/de
 To choose and run a project, followings commands are useful.
 
 * dl4j examples
-  * `sbt "; project dl4j_example; run"`
+  * `sbt "; project dl4j-examples; run"`
 
 * dl4j cuda specific examples
-  * `sbt "; project dl4j_cuda_specific_example; run"`
+  * `sbt "; project dl4j-cuda-specific-examples; run"`
 
 * datavec examples
-  * `sbt "; project datavec_example; run"`
+  * `sbt "; project datavec-examples; run"`
 
 ---
 

@@ -1,17 +1,17 @@
 lazy val root = project.in(file("."))
-    .aggregate(datavec_examples, dl4j_cuda_specific_examples, dl4j_examples)
+    .aggregate(`datavec-examples`, `dl4j-cuda-specific-examples`, `dl4j-examples`)
     .settings(name := "deeplearningj4j-examples")
     .settings(commonSettings:_*)
 
-lazy val dl4j_cuda_specific_examples = project.in(file("dl4j-cuda-specific-examples"))
+lazy val `dl4j-cuda-specific-examples` = project.in(file("dl4j-cuda-specific-examples"))
   .settings(name := "dl4j-cuda-specific-examples")
   .settings(commonSettings:_*)
 
-lazy val dl4j_examples = project.in(file("dl4j-examples"))
+lazy val `dl4j-examples` = project.in(file("dl4j-examples"))
   .settings(name := "dl4j-examples")
   .settings(commonSettings:_*)
 
-lazy val datavec_examples = project.in(file("datavec-examples"))
+lazy val `datavec-examples` = project.in(file("datavec-examples"))
   .settings(name := "datavec-examples")
   .settings(commonSettings:_*)
 
