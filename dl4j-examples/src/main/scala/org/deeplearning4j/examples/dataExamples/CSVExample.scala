@@ -3,6 +3,7 @@ package org.deeplearning4j.examples.dataExamples
 import org.datavec.api.records.reader.RecordReader
 import org.datavec.api.records.reader.impl.csv.CSVRecordReader
 import org.datavec.api.split.FileSplit
+import org.datavec.api.util.ClassPathResource
 import org.deeplearning4j.datasets.datavec.RecordReaderDataSetIterator
 import org.deeplearning4j.eval.Evaluation
 import org.deeplearning4j.nn.conf.layers.{DenseLayer, OutputLayer}
@@ -15,7 +16,7 @@ import org.nd4j.linalg.dataset.api.iterator.DataSetIterator
 import org.nd4j.linalg.dataset.{DataSet, SplitTestAndTrain}
 import org.nd4j.linalg.lossfunctions.LossFunctions
 import org.slf4j.LoggerFactory
-import org.springframework.core.io.ClassPathResource
+
 
 
 object CSVExample {

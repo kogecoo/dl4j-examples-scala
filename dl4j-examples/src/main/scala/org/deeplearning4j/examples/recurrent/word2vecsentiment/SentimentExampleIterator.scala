@@ -174,4 +174,6 @@ class SentimentExampleIterator(dataDirectory: String, wordVectors: WordVectors, 
 
     /** Convenience method to get label for review */
     def isPositiveReview(index: Int): Boolean = index % 2 == 0
+
+    override def asyncSupported(): Boolean = true
 }

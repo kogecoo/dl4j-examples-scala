@@ -160,6 +160,7 @@ class CharacterIterator(textFilePath: String, textFileEncoding: Charset, miniBat
 
   override def remove(): Unit = throw new UnsupportedOperationException()
 
+  override def asyncSupported(): Boolean = true
 }
 
 object CharacterIterator {

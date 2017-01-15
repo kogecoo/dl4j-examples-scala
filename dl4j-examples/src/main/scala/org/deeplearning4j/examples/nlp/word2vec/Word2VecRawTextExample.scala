@@ -1,5 +1,6 @@
 package org.deeplearning4j.examples.nlp.word2vec
 
+import org.datavec.api.util.ClassPathResource
 import org.deeplearning4j.models.embeddings.inmemory.InMemoryLookupTable
 import org.deeplearning4j.models.embeddings.loader.WordVectorSerializer
 import org.deeplearning4j.models.word2vec.Word2Vec
@@ -9,7 +10,7 @@ import org.deeplearning4j.text.tokenization.tokenizer.preprocessor.CommonPreproc
 import org.deeplearning4j.text.tokenization.tokenizerfactory.DefaultTokenizerFactory
 import org.deeplearning4j.ui.UiServer
 import org.slf4j.LoggerFactory
-import org.springframework.core.io.ClassPathResource
+
 
 
 object Word2VecRawTextExample {
