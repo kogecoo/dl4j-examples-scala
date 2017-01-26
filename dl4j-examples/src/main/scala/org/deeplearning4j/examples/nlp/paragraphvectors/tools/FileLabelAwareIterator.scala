@@ -58,6 +58,11 @@ class FileLabelAwareIterator protected(protected val files: java.util.List[File]
 
     override def getLabelsSource: LabelsSource = labelsSource
 
+    override def shutdown(): Unit = reset()
+
+    override def next(): LabelledDocument = nextDocument()
+
+    override def hasNext: Boolean = hasNextDocument()
 }
 
 

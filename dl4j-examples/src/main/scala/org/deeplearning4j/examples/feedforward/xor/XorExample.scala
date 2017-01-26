@@ -100,7 +100,7 @@ object XorExample {
 
 		// create a multilayer network with 2 layers (including the output
 		// layer, excluding the input payer)
-		val listBuilder = builder.list(2)
+		//val listBuilder = builder.list(2)
 
 		val hiddenLayerBuilder = new DenseLayer.Builder()
 		// two input connections - simultaneously defines the number of input
@@ -117,7 +117,7 @@ object XorExample {
 		hiddenLayerBuilder.dist(new UniformDistribution(0, 1))
 
 		// build and set as layer 0
-		listBuilder.layer(0, hiddenLayerBuilder.build())
+		//listBuilder.layer(0, hiddenLayerBuilder.build())
 
 		// MCXENT or NEGATIVELOGLIKELIHOOD work ok for this example - this
 		// function calculates the error-value
@@ -132,7 +132,9 @@ object XorExample {
 		outputLayerBuilder.activation("sigmoid")
 		outputLayerBuilder.weightInit(WeightInit.DISTRIBUTION)
 		outputLayerBuilder.dist(new UniformDistribution(0, 1))
-		listBuilder.layer(1, outputLayerBuilder.build())
+		//listBuilder.layer(1, outputLayerBuilder.build())
+
+		val listBuilder = builder.list(hiddenLayerBuilder.build(), outputLayerBuilder.build())
 
 		// no pretrain phase for this network
 		listBuilder.pretrain(false)

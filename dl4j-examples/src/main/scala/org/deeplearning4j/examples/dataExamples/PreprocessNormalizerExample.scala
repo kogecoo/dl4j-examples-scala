@@ -3,7 +3,8 @@ package org.deeplearning4j.examples.dataExamples
 import org.datavec.api.records.reader.RecordReader
 import org.datavec.api.records.reader.impl.csv.CSVRecordReader
 import org.datavec.api.split.FileSplit
-import org.springframework.core.io.ClassPathResource
+import org.datavec.api.util.ClassPathResource
+
 import org.deeplearning4j.datasets.datavec.RecordReaderDataSetIterator
 import org.nd4j.linalg.dataset.DataSet
 import org.nd4j.linalg.dataset.api.iterator.DataSetIterator
@@ -104,9 +105,9 @@ class PreprocessNormalizerExample {
 
         log.info("MinMax scaler also takes a min-max range to scale to.")
         log.info("Instantiating a new preprocessor and setting it's min-max scale to {-1,1}")
-        val preProcessorRange = new NormalizerMinMaxScaler()
-        preProcessorRange.setMinRange(-1)
-        preProcessorRange.setMaxRange(1)
+        val preProcessorRange = new NormalizerMinMaxScaler(-1,1)
+        //preProcessorRange.setMinRange(-1)
+        //preProcessorRange.setMaxRange(1)
         log.info("Fitting to dataset")
         preProcessorRange.fit(datasetY)
         log.info("First ten before transforming")

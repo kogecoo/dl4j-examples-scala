@@ -178,5 +178,7 @@ class CustomSequenceIterator(seed: Int, batchSize: Int, totalBatches: Int, numdi
     def setPreProcessor(multiDataSetPreProcessor: MultiDataSetPreProcessor) {
 
     }
+
+    override def asyncSupported(): Boolean = true
 }
 

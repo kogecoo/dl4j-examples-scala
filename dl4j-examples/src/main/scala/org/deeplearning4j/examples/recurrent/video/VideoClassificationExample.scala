@@ -1,8 +1,7 @@
 package org.deeplearning4j.examples.recurrent.video
 
 import java.io.File
-import org.apache.commons.io.FilenameUtils
-import org.apache.uima.util.FileUtils
+import org.apache.commons.io.{FileUtils, FilenameUtils}
 import org.datavec.api.conf.Configuration
 import org.datavec.api.records.reader.SequenceRecordReader
 import org.datavec.api.records.reader.impl.csv.CSVSequenceRecordReader
@@ -151,7 +150,7 @@ object VideoClassificationExample {
             while(trainData.hasNext)
                 net.fit(trainData.next())
             Nd4j.saveBinary(net.params(),new File("videomodel.bin"))
-            FileUtils.saveString2File(conf.toJson,new File("videoconf.json"))
+            FileUtils.writeStringToFile(new File("videoconf.json"),conf.toJson)
             System.out.println("Epoch " + i + " complete")
 
             //Evaluate classification performance:
