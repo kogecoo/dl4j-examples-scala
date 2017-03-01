@@ -1,14 +1,15 @@
 package org.deeplearning4j.examples.recurrent.character
 
+import org.nd4j.linalg.dataset.DataSet
+import org.nd4j.linalg.dataset.api.DataSetPreProcessor
+import org.nd4j.linalg.dataset.api.iterator.DataSetIterator
+import org.nd4j.linalg.factory.Nd4j
+
 import java.io.{File, IOException}
 import java.nio.charset.Charset
 import java.nio.file.Files
-import java.util.{Collections, LinkedList, NoSuchElementException, Random}
-
-import org.deeplearning4j.datasets.iterator.DataSetIterator
-import org.nd4j.linalg.dataset.DataSet
-import org.nd4j.linalg.dataset.api.DataSetPreProcessor
-import org.nd4j.linalg.factory.Nd4j
+import java.util
+import java.util.{Collections, Random}
 
 import scala.collection.JavaConverters._
 
@@ -23,160 +24,187 @@ import scala.collection.JavaConverters._
   *
   * @author Alex Black
   */
+object CharacterIterator {
+  /** A minimal character set, with a-z, A-Z, 0-9 and common punctuation etc */
+  def getMinimalCharacterSet: Array[Char] = (
+    ('a' to 'z') ++ ('A' to 'Z') ++ ('0' until '9') ++
+      Array('!', '&', '(', ')', '?', '-', '\'', '"', ',', '.', ':', ';', ' ', '\n', '\t')
+    ).toArray
+
+  /** As per getMinimalCharacterSet(), but with a few extra characters */
+  def getDefaultCharacterSet: Array[Char] = {
+    getMinimalCharacterSet ++
+      Array('@', '#', '$', '%', '^', '*', '{', '}', '[', ']', '/', '+', '_', '\\', '|', '<', '>')
+  }
+
+}
 
 
 /**
-  * @param textFilePath Path to text file to use for generating samples
+  * @param textFilePath     Path to text file to use for generating samples
   * @param textFileEncoding Encoding of the text file. Can try Charset.defaultCharset()
-  * @param miniBatchSize Number of examples per mini-batch
-  * @param exampleLength Number of characters in each input/output vector
-  * @param validCharacters Character array of valid characters. Characters not present in this array will be removed
-  * @param rng Random number generator, for repeatability if required
+  * @param miniBatchSize    Number of examples per mini-batch
+  * @param exampleLength    Number of characters in each input/output vector
+  * @param validCharacters  Character array of valid characters. Characters not present in this array will be removed
+  * @param rng              Random number generator, for repeatability if required
   * @throws IOException If text file cannot  be loaded
   */
-class CharacterIterator(textFilePath: String, textFileEncoding: Charset, miniBatchSize: Int, exampleLength: Int, validCharacters: Array[Char], rng: Random) extends DataSetIterator {
+@throws[IOException]
+class CharacterIterator(
+ val textFilePath: String,
+ val textFileEncoding: Charset, //Size of each minibatch (number of examples)
+ var miniBatchSize: Int, //Length of each example/minibatch (number of characters)
+ var exampleLength: Int, //Valid characters
+ var validCharacters: Array[Char], var rng: Random
+) extends DataSetIterator {
 
-  val charToIdxMap: java.util.Map[Character, Integer] = new java.util.HashMap()
-  var fileCharacters: Array[Char] = Array[Char]()
-  var examplesSoFar = 0
+  if (!new File(textFilePath).exists)
+    throw new IOException("Could not access file (does not exist): " + textFilePath)
 
-  private[this] val exampleStartOffsets: LinkedList[Integer] = new LinkedList();
+  if (miniBatchSize <= 0)
+    throw new IllegalArgumentException("Invalid miniBatchSize (must be >0)")
 
-  initValidation(textFilePath, miniBatchSize)
-  init(textFilePath, textFileEncoding, miniBatchSize, validCharacters)
+  //Maps each character to an index ind the input/output
+  //Store valid characters is a map for later use in vectorization
+  private val charToIdxMap: Map[Char, Int] =
+    validCharacters.indices.map({ i => (validCharacters(i), i)}).toMap
+
+  //Offsets for the start of each example
+  private val exampleStartOffsets: util.LinkedList[Integer] = new util.LinkedList[Integer]
 
 
+  //Load file and convert contents to a char[]
+  val lines: util.List[String] = Files.readAllLines(new File(textFilePath).toPath, textFileEncoding)
+  val maxSize: Int  = lines.size + lines.asScala.map(_.length).sum //add lines.size() to account for newline characters at end of each line
+  val characters = new Array[Char](maxSize)
+  var currIdx: Int = 0
 
-
-  private[this] def initValidation(textFilePath: String, miniBatchSize: Int) {
-    if ( !new File(textFilePath).exists()) {
-      val msg = s"Could not access file (does not exist): $textFilePath"
-      throw new IOException(msg)
+  for (s <- lines.asScala) {
+    val thisLine = s.toCharArray
+    for (aThisLine <- thisLine; if charToIdxMap.isDefinedAt(aThisLine)) {
+      characters(currIdx) = aThisLine
+      currIdx += 1
     }
-
-    if (miniBatchSize <= 0) {
-      val msg = "Invalid miniBatchSize (must be >0)"
-      throw new IllegalArgumentException(msg)
+    if (charToIdxMap.isDefinedAt('\n')) {
+      characters(currIdx) = '\n'
+      currIdx += 1
     }
   }
 
-  private[this] def init(textFilePath: String, textFileEncoding: Charset, miniBatchSize: Int, validCharacters: Array[Char]) {
-
-    //Store valid characters is a map for later use in vectorization
-    validCharacters.zipWithIndex.foreach { case (ch, i) => charToIdxMap.put(ch, i) }
-
-    //Load file and convert contents to a char[]
-    val newLineValid: Boolean = charToIdxMap.containsKey('\n')
-    val lines = Files.readAllLines(new File(textFilePath).toPath, textFileEncoding).asScala
-    val maxSize: Int = lines.map(_.length).fold(lines.size)(_ + _ ) //add lines.size() to account for newline characters at end of each line
-    fileCharacters = lines.flatMap({ s =>
-      val filtered = s.filter(charToIdxMap.containsKey(_)).toString
-      if (newLineValid) filtered + "\n" else filtered
-    }).toArray
-
-    if (exampleLength >= fileCharacters.length) {
-      val msg = s"exampleLength=$exampleLength cannot exceed number of valid characters in file (${fileCharacters.length})"
-      throw new IllegalArgumentException(msg)
-    }
-
-    val nRemoved = maxSize - fileCharacters.length
-    val msg = s"Loaded and converted file: ${fileCharacters.length} valid characters of ${maxSize} total characters (${nRemoved}) removed"
-    println(msg)
-
-    //This defines the order in which parts of the file are fetched
-    val nMinibatchesPerEpoch = (fileCharacters.length-1) / exampleLength - 2   //-2: for end index, and for partial example
-    (0 until nMinibatchesPerEpoch).foreach { i =>
-      exampleStartOffsets.add(i * exampleLength)
-    }
-    Collections.shuffle(exampleStartOffsets,rng)
+  //All characters of the input file (after filtering to only those that are valid
+  private val fileCharacters: Array[Char] = if (currIdx == characters.length) {
+    characters
+  } else {
+    util.Arrays.copyOfRange(characters, 0, currIdx)
   }
 
-  def convertIndexToCharacter(idx: Int): Char = validCharacters(idx)
+  if (exampleLength >= fileCharacters.length)
+    throw new IllegalArgumentException("exampleLength=" + exampleLength +
+      " cannot exceed number of valid characters in file (" + fileCharacters.length + ")")
 
-  def convertCharacterToIndex(c: Char): Int = charToIdxMap.get(c)
+  println("Loaded and converted file: " + fileCharacters.length +
+    " valid characters of " + maxSize + " total characters (" + (maxSize - fileCharacters.length) + " removed)")
 
-  def getRandomCharacter: Char = validCharacters((rng.nextDouble()*validCharacters.length).toInt)
+  initializeOffsets()
 
-  def hasNext: Boolean = exampleStartOffsets.size() > 0
 
-  def next(): DataSet = next(miniBatchSize)
+  def convertIndexToCharacter(idx: Int): Char =
+    validCharacters(idx)
+
+  def convertCharacterToIndex(c: Char): Int =
+    charToIdxMap(c)
+
+  def getRandomCharacter: Char =
+    validCharacters((rng.nextDouble * validCharacters.length).toInt)
+
+  def hasNext: Boolean =
+    exampleStartOffsets.size > 0
+
+  def next: DataSet =
+    next(miniBatchSize)
 
   def next(num: Int): DataSet = {
-    if (exampleStartOffsets.size() == 0) throw new NoSuchElementException()
-
-    val currMinibatchSize = Math.min(num, exampleStartOffsets.size())
-
+    if (exampleStartOffsets.size == 0) throw new NoSuchElementException
+    val currMinibatchSize: Int = Math.min(num, exampleStartOffsets.size)
+    //Allocate space:
     //Note the order here:
     // dimension 0 = number of examples in minibatch
     // dimension 1 = size of each vector (i.e., number of characters)
     // dimension 2 = length of each time series/example
-    val input = Nd4j.create(Array[Int](currMinibatchSize,validCharacters.length,exampleLength), 'f')
-    val labels = Nd4j.create(Array[Int](currMinibatchSize,validCharacters.length,exampleLength), 'f')
-
-    (0 until currMinibatchSize).foreach { i =>
+    //Why 'f' order here? See http://deeplearning4j.org/usingrnns.html#data section "Alternative: Implementing a custom DataSetIterator"
+    val input = Nd4j.create(Array[Int](currMinibatchSize, validCharacters.length, exampleLength), 'f')
+    val labels = Nd4j.create(Array[Int](currMinibatchSize, validCharacters.length, exampleLength), 'f')
+    for (i <- 0 until currMinibatchSize) {
       val startIdx = exampleStartOffsets.removeFirst()
       val endIdx = startIdx + exampleLength
-      var currCharIdx = charToIdxMap.get(fileCharacters(startIdx))	//Current input
-    var c=0
-      (startIdx+1 until endIdx).foreach { j =>
-        val nextCharIdx = charToIdxMap.get(fileCharacters(j))		//Next character to predict
-        input.putScalar(Array[Int](i,currCharIdx,c), 1.0)
-        labels.putScalar(Array[Int](i,nextCharIdx,c), 1.0)
+      var currCharIdx = charToIdxMap(fileCharacters(startIdx))
+      //Current input
+      var c: Int = 0
+      for (j <- startIdx + 1 until endIdx) {
+        val nextCharIdx = charToIdxMap(fileCharacters(j)) //Next character to predict
+        input.putScalar(Array[Int](i, currCharIdx, c), 1.0)
+        labels.putScalar(Array[Int](i, nextCharIdx, c), 1.0)
         currCharIdx = nextCharIdx
         c += 1
       }
     }
-    new DataSet(input,labels)
+    new DataSet(input, labels)
   }
 
-  def totalExamples(): Int = (fileCharacters.length-1) / miniBatchSize - 2
+  def totalExamples: Int =
+    (fileCharacters.length - 1) / miniBatchSize - 2
 
-  def inputColumns(): Int = validCharacters.length
+  def inputColumns: Int =
+    validCharacters.length
 
-  def totalOutcomes(): Int = validCharacters.length
+  def totalOutcomes: Int =
+    validCharacters.length
 
-  def reset(): Unit = {
+  def reset() {
     exampleStartOffsets.clear()
-    val nMinibatchesPerEpoch = totalExamples()
-    (0 until nMinibatchesPerEpoch).foreach { i =>
-      exampleStartOffsets.add(i * miniBatchSize)
+    initializeOffsets()
+  }
+
+  private def initializeOffsets(): Unit = {
+    //This defines the order in which parts of the file are fetched
+    val nMinibatchesPerEpoch: Int = (fileCharacters.length - 1) / exampleLength - 2
+
+    //-2: for end index, and for partial example
+    for (i <- 0 until nMinibatchesPerEpoch) {
+      exampleStartOffsets.add(i * exampleLength)
     }
-    Collections.shuffle(exampleStartOffsets,rng)
+    Collections.shuffle(exampleStartOffsets, rng)
   }
 
-  def resetSupported(): Boolean = true
+  def resetSupported: Boolean =
+    true
 
-  def batch(): Int = miniBatchSize
+  def asyncSupported: Boolean =
+    true
 
-  def cursor(): Int = totalExamples() - exampleStartOffsets.size()
+  def batch: Int =
+    miniBatchSize
 
-  def numExamples(): Int = totalExamples()
+  def cursor: Int =
+    totalExamples - exampleStartOffsets.size
 
-  def setPreProcessor(preProcessor: DataSetPreProcessor): Unit = throw new UnsupportedOperationException("Not implemented")
+  def numExamples: Int =
+    totalExamples
 
-  override def getPreProcessor: DataSetPreProcessor = throw new UnsupportedOperationException("Not implemented")
-
-  override def getLabels: java.util.List[String] = throw new UnsupportedOperationException("Not implemented")
-
-  override def remove(): Unit = throw new UnsupportedOperationException()
-
-  override def asyncSupported(): Boolean = true
-}
-
-object CharacterIterator {
-
-  /** A minimal character set, with a-z, A-Z, 0-9 and common punctuation etc */
-  def getMinimalCharacterSet: Array[Char] = {
-    (('a' to 'z').toSeq ++
-      ('A' to 'Z').toSeq ++
-      ('0' to '9').toSeq ++
-      Seq[Char]('!', '&', '(', ')', '?', '-', '\'', '"', ',', '.', ':', ';', ' ', '\n', '\t')).toArray
+  def setPreProcessor(preProcessor: DataSetPreProcessor) {
+    throw new UnsupportedOperationException("Not implemented")
   }
 
-  /** As per getMinimalCharacterSet(), but with a few extra characters */
-  def getDefaultCharacterSet: Array[Char] = {
-    (getMinimalCharacterSet ++
-      Seq[Char]('@', '#', '$', '%', '^', '*', '{', '}', '[', ']', '/', '+', '_', '\\', '|', '<', '>')).toArray
+  def getPreProcessor: DataSetPreProcessor = {
+    throw new UnsupportedOperationException("Not implemented")
+  }
+
+  def getLabels: util.List[String] = {
+    throw new UnsupportedOperationException("Not implemented")
+  }
+
+  override def remove() {
+    throw new UnsupportedOperationException
   }
 
 }
