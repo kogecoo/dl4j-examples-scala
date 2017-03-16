@@ -17,17 +17,35 @@ you should consider to use [deeplearning4s](https://github.com/deeplearning4j/de
 
 ### Getting Started
 
- This repository has 3 project.
+ This repository has some projects.
 To choose and run a project, followings commands are useful.
 
-* dl4j examples
-  * `sbt "; project dl4j-examples; run"`
+* arbiter examples
+  * `sbt "; project arbiter-examples; run"`
+
+* datavec examples
+  * `sbt "; project datavec-examples; run"`
 
 * dl4j cuda specific examples
   * `sbt "; project dl4j-cuda-specific-examples; run"`
 
-* datavec examples
-  * `sbt "; project datavec-examples; run"`
+* dl4j examples
+  * `sbt "; project dl4j-examples; run"`
+
+* dl4j spark examples
+  * `sbt "; project dl4j-spark; run"`
+
+* nd4j examples
+  * `sbt "; project nd4j-examples; run"`
+
+* rl4j examples
+  * `sbt "; project rl4j-examples; run"`
+
+### Switch nd4j backend
+To switch nd4j backend, set one of following options to `nd4jBackend` variable in `build.sbt`.
+* Libs.nd4jNativePlatform (default)
+* Libs.nd4jCuda75Platform
+* Libs.nd4jCuda80Platform
 
 ---
 
@@ -46,4 +64,5 @@ Repository of Deeplearning4J neural net examples:
 For more information, check out [deeplearning4j.org](http://deeplearning4j.org/) and its [JavaDoc](http://deeplearning4j.org/doc/).
 
 If you notice issues, please log them, and if you want to contribute, submit a pull request. Input is welcome here.
+
 
